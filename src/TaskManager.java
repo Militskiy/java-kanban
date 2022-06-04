@@ -88,7 +88,7 @@ public class TaskManager {
     }
 
     // Метод запроса конкретной Task
-    public Task giveTask(String id) {
+    public Task getTaskById(String id) {
         return taskList.get(id);
     }
 
@@ -98,7 +98,7 @@ public class TaskManager {
     }
 
     // Метод запроса конкретного Epic
-    public Epic giveEpic(String id) {
+    public Epic getEpicById(String id) {
         return epicList.get(id);
     }
 
@@ -108,7 +108,7 @@ public class TaskManager {
     }
 
     // Метод запроса конкретного Subtask
-    public Subtask giveSubtask(String id) {
+    public Subtask getSubtaskById(String id) {
         return subtaskList.get(id);
     }
 
@@ -142,14 +142,14 @@ public class TaskManager {
     }
 
     // Метод расчета статуса Epic в зависимости от статусов его Subtask
-    public void updateEpicStatus(Subtask subtask) {
-        ArrayList<String> epicStatusList = new ArrayList<>();
+    private void updateEpicStatus(Subtask subtask) {
+        ArrayList<Status> epicStatusList = new ArrayList<>();
         for (String id : subtaskList.keySet()) {
             if (subtaskList.get(id).getEpicId().equals(subtask.getEpicId())) {
                 epicStatusList.add(subtaskList.get(id).getStatus());
             }
         }
-        String status;
+        Status status;
         if (epicStatusList.isEmpty()) {
             status = Status.NEW;
             Epic epic = epicList.get(subtask.getEpicId());

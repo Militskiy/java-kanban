@@ -59,12 +59,13 @@ public class Main {
         System.out.println(taskManager.listTasks());
 
         System.out.println("\n" + "Showing Task-2" + "\n");
-        System.out.println(taskManager.giveTask("Task-2"));
+        System.out.println(taskManager.getTaskById("Task-2"));
 
-        System.out.println("\n" + "Deleting Epic-1" + "\n");
-        taskManager.deleteEpic("Epic-1");
+        System.out.println("\n" + "Deleting Epic-2" + "\n");
+        taskManager.deleteEpic("Epic-2");
         listAllSubtasks(taskManager);
 
+        System.out.println("\n" + "Show all" + "\n");
         for (Object obj : taskManager.listEveryTaskAndEpicAndSubtask()) {
             System.out.println(obj);
         }
