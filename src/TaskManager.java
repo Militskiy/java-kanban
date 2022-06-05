@@ -11,12 +11,14 @@ public class TaskManager {
     public void addSubTask(Subtask subtask) {
         subtask.setId(idGenerator.generateID("Subtask"));
         subtaskList.put(subtask.getId(), subtask);
+        epicList.get(subtask.getEpicId()).addSubtask(subtask);
         updateEpicStatus(subtask);
     }
 
     // Метод обновления Subtask
     public void updateSubtask(Subtask subtask) {
         subtaskList.put(subtask.getId(), subtask);
+        epicList.get(subtask.getEpicId()).addSubtask(subtask);
         updateEpicStatus(subtask);
     }
 
@@ -24,6 +26,7 @@ public class TaskManager {
     public void deleteSubTask(String subtaskID) {
         Subtask subtask = subtaskList.get(subtaskID);
         subtaskList.remove(subtaskID);
+        epicList.get(subtask.getEpicId()).getSubtaskList().remove(subtaskID);
         updateEpicStatus(subtask);
     }
 
@@ -143,27 +146,16 @@ public class TaskManager {
 
     // Метод расчета статуса Epic в зависимости от статусов его Subtask
     private void updateEpicStatus(Subtask subtask) {
-        ArrayList<Status> epicStatusList = new ArrayList<>();
-        for (String id : subtaskList.keySet()) {
-            if (subtaskList.get(id).getEpicId().equals(subtask.getEpicId())) {
-                epicStatusList.add(subtaskList.get(id).getStatus());
-            }
-        }
-        Status status;
-        if (epicStatusList.isEmpty()) {
-            status = Status.NEW;
-            Epic epic = epicList.get(subtask.getEpicId());
-            epic.setStatus(status);
-            epicList.put(subtask.getEpicId(), epic);
+        ArrayList<Status> epicStatusList = new ArrayList<>(epicList.get(subtask.getEpicId()).getSubtaskList().values());
+        Epic epic = epicList.get(subtask.getEpicId());
+        if (epicList.get(subtask.getEpicId()).getSubtaskList().isEmpty()) {
+            epic.setStatus(Status.NEW);
         } else {
             if (epicStatusList.stream().allMatch(epicStatusList.get(0)::equals)) {
-                status = epicStatusList.get(0);
+                epic.setStatus(epicStatusList.get(0));
             } else {
-                status = Status.IN_PROGRESS;
+                epic.setStatus(Status.IN_PROGRESS);
             }
-            Epic epic = epicList.get(subtask.getEpicId());
-            epic.setStatus(status);
-            epicList.put(subtask.getEpicId(), epic);
         }
     }
 }

@@ -23,52 +23,45 @@ public class Main {
         listTasks(taskManager);
         listEpicsAndSubs(taskManager);
 
-        System.out.println("\n" + "Print all" + "\n");
-        for (Object obj : taskManager.listEveryTaskAndEpicAndSubtask()) {
-            System.out.println(obj);
-        }
+        System.out.println("\n" + "Subtask-1 to DONE" + "\n");
 
-        System.out.println("\n" + "Changing Task-1 & 2 statuses" + "\n");
-        task = new Task("Task-1", "Test Task-1", "description", Status.IN_PROGRESS);
-        taskManager.updateTask(task);
-        task = new Task("Task-2", "Test Task-2", "description", Status.DONE);
-        taskManager.updateTask(task);
-        listTasks(taskManager);
-
-        System.out.println("\n" + "Changing Subtask-2 status to IN_PROGRESS" + "\n");
-        subtask = new Subtask("Subtask-2", "Test Subtask-2", "description", Status.IN_PROGRESS, "Epic-1");
+        subtask = taskManager.getSubtaskById("Subtask-1");
+        subtask.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask);
         listEpicsAndSubs(taskManager);
 
-        System.out.println("\n" + "Changing Subtask-1 & 2 status to DONE" + "\n");
-        subtask = new Subtask("Subtask-1", "Test Subtask-1", "description", Status.DONE, "Epic-1");
+        System.out.println("\n" + "Subtask-2 to DONE" + "\n");
+
+        subtask = taskManager.getSubtaskById("Subtask-2");
+        subtask.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask);
-        subtask = new Subtask("Subtask-2", "Test Subtask-2", "description", Status.DONE, "Epic-1");
+        listEpicsAndSubs(taskManager);
+
+        System.out.println("\n" + "Changing Epic-1 name and description" + "\n");
+
+        epic = taskManager.getEpicById("Epic-1");
+        epic.setName("This Epic is DONE");
+        epic.setDescription("Testing attribute changes");
+        taskManager.updateEpic(epic);
+        subtask = taskManager.getSubtaskById("Subtask-2");
+        subtask.setStatus(Status.IN_PROGRESS);
         taskManager.updateSubtask(subtask);
         listEpicsAndSubs(taskManager);
 
         System.out.println("\n" + "Deleting Subtask-1 & 2" + "\n");
+
         taskManager.deleteSubTask("Subtask-1");
         taskManager.deleteSubTask("Subtask-2");
-        epic = new Epic("Epic-1", "Test Epic-1", "Removed all subtasks");
+        epic = taskManager.getEpicById("Epic-1");
+        epic.setName("This Epic is NEW");
+        epic.setDescription("No subtasks");
         taskManager.updateEpic(epic);
         listEpicsAndSubs(taskManager);
 
-        System.out.println("\n" + "Deleting Task-1" + "\n");
-        taskManager.deleteTask("Task-1");
-        System.out.println(taskManager.listTasks());
+        System.out.println("\n" + "Listing all subtasks" + "\n");
 
-        System.out.println("\n" + "Showing Task-2" + "\n");
-        System.out.println(taskManager.getTaskById("Task-2"));
-
-        System.out.println("\n" + "Deleting Epic-2" + "\n");
-        taskManager.deleteEpic("Epic-2");
         listAllSubtasks(taskManager);
 
-        System.out.println("\n" + "Show all" + "\n");
-        for (Object obj : taskManager.listEveryTaskAndEpicAndSubtask()) {
-            System.out.println(obj);
-        }
     }
 
     // Методы вывода на экран списков задач (для тестирования)
