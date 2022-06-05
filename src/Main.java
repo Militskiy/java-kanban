@@ -44,7 +44,7 @@ public class Main {
         epic.setDescription("Testing attribute changes");
         taskManager.updateEpic(epic);
         subtask = taskManager.getSubtaskById("Subtask-2");
-        subtask.setStatus(Status.IN_PROGRESS);
+        subtask.setStatus(Status.DONE);
         taskManager.updateSubtask(subtask);
         listEpicsAndSubs(taskManager);
 
@@ -61,6 +61,16 @@ public class Main {
         System.out.println("\n" + "Listing all subtasks" + "\n");
 
         listAllSubtasks(taskManager);
+
+        System.out.println("\n" + "Subtask-3 Done" + "\n");
+        subtask = taskManager.getSubtaskById("Subtask-3");
+        subtask.setStatus(Status.DONE);
+        taskManager.updateSubtask(subtask);
+        listEpicsAndSubs(taskManager);
+
+        System.out.println("\n" + "Deleting all subtasks" + "\n");
+        taskManager.deleteAllSubTasks();
+        listEpicsAndSubs(taskManager);
 
     }
 
@@ -81,8 +91,8 @@ public class Main {
     }
 
     public static void listAllSubtasks(TaskManager taskManager) {
-        for (String id : taskManager.listAllSubtasks().keySet()) {
-            System.out.println(taskManager.listAllSubtasks().get(id));
+        for (Subtask subtask : taskManager.listAllSubtasks()) {
+            System.out.println(subtask);
         }
     }
 }
