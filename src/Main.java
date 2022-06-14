@@ -81,7 +81,7 @@ public class Main {
         taskManager.getTaskById("Task-2");
         taskManager.getSubtaskById("Subtask-3");
         System.out.println(taskManager.getEpicById("Epic-2"));
-        for (Task task1 : taskManager.getHistory()) {
+        for (Task task1 : taskManager.historyManager.getHistory()) {
             System.out.println(task1);
         }
 

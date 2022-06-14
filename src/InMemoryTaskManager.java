@@ -107,37 +107,8 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Task getTaskById(String id) {
         Task task = taskList.get(id);
-        updateHistory(task);
+        historyManager.add(task);
         return task;
-    }
-
-    private void updateHistory(Object obj) {
-
-        if (obj instanceof Subtask) {
-            Subtask subtask = (Subtask) obj;
-            if (historyManager.getHistory().size() < 10) {
-                historyManager.getHistory().add(subtaskList.get(subtask.getId()));
-            } else {
-                historyManager.getHistory().remove(0);
-                historyManager.getHistory().add(subtaskList.get(subtask.getId()));
-            }
-        } else if (obj instanceof Epic) {
-            Epic epic = (Epic) obj;
-            if (historyManager.getHistory().size() < 10) {
-                historyManager.getHistory().add(epicList.get(epic.getId()));
-            } else {
-                historyManager.getHistory().remove(0);
-                historyManager.getHistory().add(epicList.get(epic.getId()));
-            }
-        } else if (obj instanceof Task) {
-            Task task = (Task) obj;
-            if (historyManager.getHistory().size() < 10) {
-                historyManager.getHistory().add(taskList.get(task.getId()));
-            } else {
-                historyManager.getHistory().remove(0);
-                historyManager.getHistory().add(taskList.get(task.getId()));
-            }
-        }
     }
 
     // Метод запроса списка Epic
@@ -150,7 +121,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Epic getEpicById(String id) {
         Epic epic = epicList.get(id);
-        updateHistory(epic);
+        historyManager.add(epic);
         return epic;
     }
 
@@ -164,7 +135,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public Subtask getSubtaskById(String id) {
         Subtask subtask = subtaskList.get(id);
-        updateHistory(subtask);
+        historyManager.add(subtask);
         return subtask;
     }
 
@@ -213,10 +184,5 @@ public class InMemoryTaskManager implements TaskManager {
                 epic.setStatus(Status.IN_PROGRESS);
             }
         }
-    }
-
-    @Override
-    public List<Task> getHistory() {
-        return historyManager.getHistory();
     }
 }

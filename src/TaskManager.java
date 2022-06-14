@@ -1,7 +1,7 @@
 import java.util.LinkedHashMap;
 import java.util.List;
 
-public interface TaskManager extends HistoryManager {
+public interface TaskManager {
     HistoryManager historyManager = Managers.getDefaultHistory();
 
     // Метод добавления Subtask
