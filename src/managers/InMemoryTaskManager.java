@@ -1,3 +1,8 @@
+package managers;
+
+import managers.util.*;
+import tasks.*;
+
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -7,7 +12,7 @@ public class InMemoryTaskManager implements TaskManager {
     private final LinkedHashMap<String, Epic> epicList = new LinkedHashMap<>();
     private final LinkedHashMap<String, Subtask> subtaskList = new LinkedHashMap<>();
 
-    // Метод добавления Subtask
+    // Метод добавления tasks.Subtask
     @Override
     public void addSubTask(Subtask subtask) {
         subtask.setId(IdGenerator.generateID("Subtask"));
@@ -16,7 +21,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(subtask);
     }
 
-    // Метод обновления Subtask
+    // Метод обновления tasks.Subtask
     @Override
     public void updateSubtask(Subtask subtask) {
         subtaskList.put(subtask.getId(), subtask);
@@ -24,7 +29,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(subtask);
     }
 
-    // Метод удаления Subtask
+    // Метод удаления tasks.Subtask
     @Override
     public void deleteSubTask(String subtaskID) {
         Subtask subtask = subtaskList.get(subtaskID);
@@ -33,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
         updateEpicStatus(subtask);
     }
 
-    // Метод удаления всех Subtask
+    // Метод удаления всех tasks.Subtask
     @Override
     public void deleteAllSubTasks() {
         subtaskList.clear();
@@ -44,20 +49,20 @@ public class InMemoryTaskManager implements TaskManager {
         }
     }
 
-    // Метод добавления Task
+    // Метод добавления tasks.Task
     @Override
     public void addTask(Task task) {
         task.setId(IdGenerator.generateID("Task"));
         taskList.put(task.getId(), task);
     }
 
-    // Метод обновления Task
+    // Метод обновления tasks.Task
     @Override
     public void updateTask(Task task) {
         taskList.put(task.getId(), task);
     }
 
-    // Метод удаления Task
+    // Метод удаления tasks.Task
     @Override
     public void deleteTask(String taskID) {
         taskList.remove(taskID);
@@ -68,7 +73,7 @@ public class InMemoryTaskManager implements TaskManager {
         taskList.clear();
     }
 
-    // Метод добавления Epic
+    // Метод добавления tasks.Epic
     @Override
     public void addEpic(Epic epic) {
         epic.setId(IdGenerator.generateID("Epic"));
@@ -76,34 +81,34 @@ public class InMemoryTaskManager implements TaskManager {
         epicList.put(epic.getId(), epic);
     }
 
-    // Метод обновления Epic
+    // Метод обновления tasks.Epic
     @Override
     public void updateEpic(Epic epic) {
         epic.setStatus(epicList.get(epic.getId()).getStatus());
         epicList.put(epic.getId(), epic);
     }
 
-    // Метод удаления Epic
+    // Метод удаления tasks.Epic
     @Override
     public void deleteEpic(String id) {
         epicList.remove(id);
         subtaskList.values().removeIf(n -> id.equals(n.getEpicId()));
     }
 
-    // Метод удаления всех Epic
+    // Метод удаления всех tasks.Epic
     @Override
     public void deleteAllEpics() {
         subtaskList.clear();
         epicList.clear();
     }
 
-    // Метод запроса списка Task
+    // Метод запроса списка tasks.Task
     @Override
     public LinkedHashMap<String, Task> listTasks() {
         return taskList;
     }
 
-    // Метод запроса конкретной Task
+    // Метод запроса конкретной tasks.Task
     @Override
     public Task getTaskById(String id) {
         Task task = taskList.get(id);
@@ -111,13 +116,13 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    // Метод запроса списка Epic
+    // Метод запроса списка tasks.Epic
     @Override
     public LinkedHashMap<String, Epic> listEpics() {
         return epicList;
     }
 
-    // Метод запроса конкретного Epic
+    // Метод запроса конкретного tasks.Epic
     @Override
     public Epic getEpicById(String id) {
         Epic epic = epicList.get(id);
@@ -125,13 +130,13 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
-    // Метод запроса списка Subtask
+    // Метод запроса списка tasks.Subtask
     @Override
     public LinkedHashMap<String, Subtask> listAllSubtasks() {
         return subtaskList;
     }
 
-    // Метод запроса конкретного Subtask
+    // Метод запроса конкретного tasks.Subtask
     @Override
     public Subtask getSubtaskById(String id) {
         Subtask subtask = subtaskList.get(id);
@@ -139,7 +144,7 @@ public class InMemoryTaskManager implements TaskManager {
         return subtask;
     }
 
-    // Метод запроса списка Subtask конкретного Epic
+    // Метод запроса списка tasks.Subtask конкретного tasks.Epic
     @Override
     public LinkedHashMap<String, Subtask> listEpicSubtasks(String epicID) {
         LinkedHashMap<String, Subtask> list = new LinkedHashMap<>();
@@ -170,7 +175,7 @@ public class InMemoryTaskManager implements TaskManager {
         return list;
     }
 
-    // Метод расчета статуса Epic в зависимости от статусов его Subtask
+    // Метод расчета статуса tasks.Epic в зависимости от статусов его tasks.Subtask
     @Override
     public void updateEpicStatus(Subtask subtask) {
         ArrayList<Status> epicStatusList = new ArrayList<>(epicList.get(subtask.getEpicId()).getSubtaskList().values());

@@ -1,3 +1,7 @@
+package tasks;
+
+import managers.util.Status;
+
 public class Subtask extends Task {
 
     private final String epicId;

@@ -1,3 +1,5 @@
+package managers.util;
+
 public final class IdGenerator {
     private IdGenerator() {
     }
