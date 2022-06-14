@@ -2,7 +2,7 @@ public class Main {
 
 
     public static void main(String[] args) {
-        TaskManager taskManager = new TaskManager();
+        TaskManager taskManager = Managers.getDefault();
 
         // Тестирования запросов условного "Фронта"
         System.out.println("\n" + "Adding 2 Tasks, 2 Epics, 3 Subtasks" + "\n");
@@ -44,7 +44,7 @@ public class Main {
         epic.setDescription("Testing attribute changes");
         taskManager.updateEpic(epic);
         subtask = taskManager.getSubtaskById("Subtask-2");
-        subtask.setStatus(Status.DONE);
+        subtask.setStatus(Status.IN_PROGRESS);
         taskManager.updateSubtask(subtask);
         listEpicsAndSubs(taskManager);
 
@@ -62,15 +62,28 @@ public class Main {
 
         listAllSubtasks(taskManager);
 
-        System.out.println("\n" + "Subtask-3 Done" + "\n");
-        subtask = taskManager.getSubtaskById("Subtask-3");
-        subtask.setStatus(Status.DONE);
-        taskManager.updateSubtask(subtask);
-        listEpicsAndSubs(taskManager);
-
-        System.out.println("\n" + "Deleting all subtasks" + "\n");
-        taskManager.deleteAllSubTasks();
-        listEpicsAndSubs(taskManager);
+        System.out.println("\n" + "Showing history" + "\n");
+        System.out.println(taskManager.getTaskById("Task-1"));
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-1");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-1");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-1");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-1");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-2");
+        taskManager.getTaskById("Task-2");
+        taskManager.getSubtaskById("Subtask-3");
+        System.out.println(taskManager.getEpicById("Epic-2"));
+        for (Task task1 : taskManager.historyManager.getHistory()) {
+            System.out.println(task1);
+        }
 
     }
 
@@ -91,8 +104,8 @@ public class Main {
     }
 
     public static void listAllSubtasks(TaskManager taskManager) {
-        for (Subtask subtask : taskManager.listAllSubtasks()) {
-            System.out.println(subtask);
+        for (String id : taskManager.listAllSubtasks().keySet()) {
+            System.out.println(taskManager.listAllSubtasks().get(id));
         }
     }
 }
