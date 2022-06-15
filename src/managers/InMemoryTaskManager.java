@@ -176,8 +176,7 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // Метод расчета статуса tasks.Epic в зависимости от статусов его tasks.Subtask
-    @Override
-    public void updateEpicStatus(Subtask subtask) {
+    private void updateEpicStatus(Subtask subtask) {
         ArrayList<Status> epicStatusList = new ArrayList<>(epicList.get(subtask.getEpicId()).getSubtaskList().values());
         Epic epic = epicList.get(subtask.getEpicId());
         if (epicList.get(subtask.getEpicId()).getSubtaskList().isEmpty()) {

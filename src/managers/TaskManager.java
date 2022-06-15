@@ -64,7 +64,4 @@ public interface TaskManager {
 
     // Метод вывода сразу всех задач, эпиков и подзадач
     List<Task> listEveryTaskAndEpicAndSubtask();
-
-    // Метод расчета статуса tasks.Epic в зависимости от статусов его tasks.Subtask
-    void updateEpicStatus(Subtask subtask);
 }
