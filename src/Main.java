@@ -123,10 +123,10 @@ public class Main {
     }
 
     private static void listTasks(TaskManager taskManager) {
-        taskManager.listTasks().forEach((k, v) -> System.out.println(v));
+        taskManager.listTasks().forEach((id, task) -> System.out.println(task));
     }
 
     private static void listAllSubtasks(TaskManager taskManager) {
-        taskManager.listAllSubtasks().forEach((k, v) -> System.out.println(v));
+        taskManager.listAllSubtasks().forEach((id, subtask) -> System.out.println(subtask));
     }
 }

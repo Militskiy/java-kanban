@@ -6,7 +6,6 @@ import tasks.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private final LinkedHashMap<String, Task> taskList = new LinkedHashMap<>();
@@ -41,9 +40,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllSubTasks() {
         subtaskList.clear();
-        epicList.forEach((k, v) -> {
-            v.setStatus(Status.NEW);
-            epicList.put(k, v);
+        epicList.forEach((id, epic) -> {
+            epic.setStatus(Status.NEW);
+            epicList.put(id, epic);
         });
     }
 
@@ -90,7 +89,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpic(String id) {
         epicList.remove(id);
-        subtaskList.values().removeIf(n -> id.equals(n.getEpic().getId()));
+        subtaskList.values().removeIf(subtask -> id.equals(subtask.getEpic().getId()));
     }
 
     // Метод удаления всех Epic
@@ -158,9 +157,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> listEveryTaskAndEpicAndSubtask() {
         List<Task> list = new ArrayList<>();
-        taskList.forEach((k, v) -> list.add(v));
-        epicList.forEach((k, v) -> list.add(v));
-        subtaskList.forEach((k, v) -> list.add(v));
+        taskList.forEach((id, task) -> list.add(task));
+        epicList.forEach((id, epic) -> list.add(epic));
+        subtaskList.forEach((id, subtask) -> list.add(subtask));
         return list;
     }
 
@@ -168,7 +167,7 @@ public class InMemoryTaskManager implements TaskManager {
     private void updateEpicStatus(Subtask subtask) {
         Epic epic = epicList.get(subtask.getEpic().getId());
         ArrayList<Status> epicStatusList = new ArrayList<>();
-        epic.getSubtaskList().forEach(n -> epicStatusList.add(n.getStatus()));
+        epic.getSubtaskList().forEach(subtask1 -> epicStatusList.add(subtask1.getStatus()));
         if (epic.getSubtaskList().isEmpty()) {
             epic.setStatus(Status.NEW);
         } else {
