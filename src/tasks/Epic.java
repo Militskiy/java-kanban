@@ -1,22 +1,21 @@
 package tasks;
 
-import managers.util.Status;
-
-import java.util.LinkedHashMap;
+import java.util.ArrayList;
+import java.util.List;
 
 public class Epic extends Task {
 
-    private final LinkedHashMap<String, Status> subtaskList = new LinkedHashMap<>();
+    private final List<Subtask> subtaskList = new ArrayList<>();
 
     public Epic(String id, String name, String description) {
         super(id, name, description);
     }
 
     public void addSubtask(Subtask subtask) {
-        subtaskList.put(subtask.getId(), subtask.getStatus());
+        subtaskList.add(subtask);
     }
 
-    public LinkedHashMap<String, Status> getSubtaskList() {
+    public List<Subtask> getSubtaskList() {
         return subtaskList;
     }
 

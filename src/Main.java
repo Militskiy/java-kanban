@@ -15,15 +15,15 @@ public class Main {
         taskManager.addTask(task);
         task = new Task(null, "Task-2", "description", Status.NEW);
         taskManager.addTask(task);
-        Epic epic = new Epic(null, "Epic-1", "description");
-        taskManager.addEpic(epic);
-        epic = new Epic(null, "Epic-2", "description");
-        taskManager.addEpic(epic);
-        Subtask subtask = new Subtask(null, "Subtask-1", "description", Status.NEW, "Epic-1");
+        Epic epic1 = new Epic(null, "Epic-1", "description");
+        taskManager.addEpic(epic1);
+        Epic epic2 = new Epic(null, "Epic-2", "description");
+        taskManager.addEpic(epic2);
+        Subtask subtask = new Subtask(null, "Subtask-1", "description", Status.NEW, epic1);
         taskManager.addSubTask(subtask);
-        subtask = new Subtask(null, "Subtask-2", "description", Status.NEW, "Epic-1");
+        subtask = new Subtask(null, "Subtask-2", "description", Status.NEW, epic1);
         taskManager.addSubTask(subtask);
-        subtask = new Subtask(null, "Subtask-3", "description", Status.NEW, "Epic-2");
+        subtask = new Subtask(null, "Subtask-3", "description", Status.NEW, epic2);
         taskManager.addSubTask(subtask);
         listTasks(taskManager);
         listEpicsAndSubs(taskManager);
@@ -48,20 +48,18 @@ public class Main {
 
         System.out.println("\n" + "Changing Epic-1 name and description" + "\n");
 
-        epic = taskManager.getEpicById("Epic-1");
-        epic.setName("This Epic is DONE");
-        epic.setDescription("Testing attribute changes");
-        taskManager.updateEpic(epic);
+        epic1.setName("This Epic is DONE");
+        epic1.setDescription("Testing attribute changes");
+        taskManager.updateEpic(epic1);
         listEpicsAndSubs(taskManager);
 
         System.out.println("\n" + "Deleting Subtask-1 & 2" + "\n");
 
         taskManager.deleteSubTask("Subtask-1");
         taskManager.deleteSubTask("Subtask-2");
-        epic = taskManager.getEpicById("Epic-1");
-        epic.setName("This Epic is NEW");
-        epic.setDescription("No subtasks");
-        taskManager.updateEpic(epic);
+        epic1.setName("This Epic is NEW");
+        epic1.setDescription("No subtasks");
+        taskManager.updateEpic(epic1);
         listEpicsAndSubs(taskManager);
 
         System.out.println("\n" + "Listing all subtasks" + "\n");

@@ -6,39 +6,38 @@ import tasks.*;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class InMemoryTaskManager implements TaskManager {
     private final LinkedHashMap<String, Task> taskList = new LinkedHashMap<>();
     private final LinkedHashMap<String, Epic> epicList = new LinkedHashMap<>();
     private final LinkedHashMap<String, Subtask> subtaskList = new LinkedHashMap<>();
 
-    // Метод добавления tasks.Subtask
+    // Метод добавления Subtask
     @Override
     public void addSubTask(Subtask subtask) {
         subtask.setId(IdGenerator.generateID("Subtask"));
         subtaskList.put(subtask.getId(), subtask);
-        epicList.get(subtask.getEpicId()).addSubtask(subtask);
+        epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
         updateEpicStatus(subtask);
     }
 
-    // Метод обновления tasks.Subtask
+    // Метод обновления Subtask
     @Override
     public void updateSubtask(Subtask subtask) {
         subtaskList.put(subtask.getId(), subtask);
-        epicList.get(subtask.getEpicId()).addSubtask(subtask);
         updateEpicStatus(subtask);
     }
 
-    // Метод удаления tasks.Subtask
+    // Метод удаления Subtask
     @Override
     public void deleteSubTask(String subtaskID) {
-        Subtask subtask = subtaskList.get(subtaskID);
+        epicList.get(subtaskList.get(subtaskID).getEpic().getId()).getSubtaskList().remove(subtaskList.get(subtaskID));
+        updateEpicStatus(subtaskList.get(subtaskID));
         subtaskList.remove(subtaskID);
-        epicList.get(subtask.getEpicId()).getSubtaskList().remove(subtaskID);
-        updateEpicStatus(subtask);
     }
 
-    // Метод удаления всех tasks.Subtask
+    // Метод удаления всех Subtask
     @Override
     public void deleteAllSubTasks() {
         subtaskList.clear();
@@ -48,20 +47,20 @@ public class InMemoryTaskManager implements TaskManager {
         });
     }
 
-    // Метод добавления tasks.Task
+    // Метод добавления Task
     @Override
     public void addTask(Task task) {
         task.setId(IdGenerator.generateID("Task"));
         taskList.put(task.getId(), task);
     }
 
-    // Метод обновления tasks.Task
+    // Метод обновления Task
     @Override
     public void updateTask(Task task) {
         taskList.put(task.getId(), task);
     }
 
-    // Метод удаления tasks.Task
+    // Метод удаления Task
     @Override
     public void deleteTask(String taskID) {
         taskList.remove(taskID);
@@ -72,7 +71,7 @@ public class InMemoryTaskManager implements TaskManager {
         taskList.clear();
     }
 
-    // Метод добавления tasks.Epic
+    // Метод добавления Epic
     @Override
     public void addEpic(Epic epic) {
         epic.setId(IdGenerator.generateID("Epic"));
@@ -80,21 +79,21 @@ public class InMemoryTaskManager implements TaskManager {
         epicList.put(epic.getId(), epic);
     }
 
-    // Метод обновления tasks.Epic
+    // Метод обновления Epic
     @Override
     public void updateEpic(Epic epic) {
         epic.setStatus(epicList.get(epic.getId()).getStatus());
         epicList.put(epic.getId(), epic);
     }
 
-    // Метод удаления tasks.Epic
+    // Метод удаления Epic
     @Override
     public void deleteEpic(String id) {
         epicList.remove(id);
-        subtaskList.values().removeIf(n -> id.equals(n.getEpicId()));
+        subtaskList.values().removeIf(n -> id.equals(n.getEpic().getId()));
     }
 
-    // Метод удаления всех tasks.Epic
+    // Метод удаления всех Epic
     @Override
     public void deleteAllEpics() {
         subtaskList.clear();
@@ -107,7 +106,7 @@ public class InMemoryTaskManager implements TaskManager {
         return taskList;
     }
 
-    // Метод запроса конкретной tasks.Task
+    // Метод запроса конкретной Task
     @Override
     public Task getTaskById(String id) {
         Task task = taskList.get(id);
@@ -115,13 +114,13 @@ public class InMemoryTaskManager implements TaskManager {
         return task;
     }
 
-    // Метод запроса списка tasks.Epic
+    // Метод запроса списка Epic
     @Override
     public LinkedHashMap<String, Epic> listEpics() {
         return epicList;
     }
 
-    // Метод запроса конкретного tasks.Epic
+    // Метод запроса конкретного Epic
     @Override
     public Epic getEpicById(String id) {
         Epic epic = epicList.get(id);
@@ -129,13 +128,13 @@ public class InMemoryTaskManager implements TaskManager {
         return epic;
     }
 
-    // Метод запроса списка tasks.Subtask
+    // Метод запроса списка Subtask
     @Override
     public LinkedHashMap<String, Subtask> listAllSubtasks() {
         return subtaskList;
     }
 
-    // Метод запроса конкретного tasks.Subtask
+    // Метод запроса конкретного Subtask
     @Override
     public Subtask getSubtaskById(String id) {
         Subtask subtask = subtaskList.get(id);
@@ -143,12 +142,12 @@ public class InMemoryTaskManager implements TaskManager {
         return subtask;
     }
 
-    // Метод запроса списка tasks.Subtask конкретного tasks.Epic
+    // Метод запроса списка Subtask конкретного Epic
     @Override
     public LinkedHashMap<String, Subtask> listEpicSubtasks(String epicID) {
         LinkedHashMap<String, Subtask> list = new LinkedHashMap<>();
         subtaskList.forEach((id, subtask) -> {
-            if (subtask.getEpicId().equals(epicID)) {
+            if (subtask.getEpic().getId().equals(epicID)) {
                 list.put(id, subtask);
             }
         });
@@ -165,11 +164,12 @@ public class InMemoryTaskManager implements TaskManager {
         return list;
     }
 
-    // Метод расчета статуса tasks.Epic в зависимости от статусов его tasks.Subtask
+    // Метод расчета статуса Epic в зависимости от статусов его Subtask
     private void updateEpicStatus(Subtask subtask) {
-        ArrayList<Status> epicStatusList = new ArrayList<>(epicList.get(subtask.getEpicId()).getSubtaskList().values());
-        Epic epic = epicList.get(subtask.getEpicId());
-        if (epicList.get(subtask.getEpicId()).getSubtaskList().isEmpty()) {
+        Epic epic = epicList.get(subtask.getEpic().getId());
+        ArrayList<Status> epicStatusList = new ArrayList<>();
+        epic.getSubtaskList().forEach(n -> epicStatusList.add(n.getStatus()));
+        if (epic.getSubtaskList().isEmpty()) {
             epic.setStatus(Status.NEW);
         } else {
             if (epicStatusList.stream().allMatch(epicStatusList.get(0)::equals)) {

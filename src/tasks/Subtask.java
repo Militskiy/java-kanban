@@ -4,21 +4,21 @@ import managers.util.Status;
 
 public class Subtask extends Task {
 
-    private final String epicId;
+    private final Epic epic;
 
-    public String getEpicId() {
-        return epicId;
+    public Epic getEpic() {
+        return epic;
     }
 
-    public Subtask(String id, String name, String description, Status status, String epicId) {
+    public Subtask(String id, String name, String description, Status status, Epic epic) {
         super(id, name, description, status);
-        this.epicId = epicId;
+        this.epic = epic;
     }
 
     @Override
     public String toString() {
         return "Subtask{" +
-                "epicId='" + epicId + '\'' +
+                "epicId='" + epic.getId() + '\'' +
                 ", id='" + id + '\'' +
                 ", name='" + name + '\'' +
                 ", description='" + description + '\'' +
