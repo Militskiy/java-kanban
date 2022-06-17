@@ -42,11 +42,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllSubTasks() {
         subtaskList.clear();
-        for (String epic : epicList.keySet()) {
-            Epic epic1 = epicList.get(epic);
-            epic1.setStatus(Status.NEW);
-            epicList.put(epic, epic1);
-        }
+        epicList.forEach((k, v) -> {
+            v.setStatus(Status.NEW);
+            epicList.put(k, v);
+        });
     }
 
     // Метод добавления tasks.Task
@@ -148,11 +147,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public LinkedHashMap<String, Subtask> listEpicSubtasks(String epicID) {
         LinkedHashMap<String, Subtask> list = new LinkedHashMap<>();
-        for (String id : subtaskList.keySet()) {
-            if (subtaskList.get(id).getEpicId().equals(epicID)) {
-                list.put(id, subtaskList.get(id));
+        subtaskList.forEach((id, subtask) -> {
+            if (subtask.getEpicId().equals(epicID)) {
+                list.put(id, subtask);
             }
-        }
+        });
         return list;
     }
 
@@ -160,18 +159,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public List<Task> listEveryTaskAndEpicAndSubtask() {
         List<Task> list = new ArrayList<>();
-        for (String id : taskList.keySet()) {
-            Task task = taskList.get(id);
-            list.add(task);
-        }
-        for (String id : epicList.keySet()) {
-            Epic epic = epicList.get(id);
-            list.add(epic);
-        }
-        for (String id : subtaskList.keySet()) {
-            Subtask subtask = subtaskList.get(id);
-            list.add(subtask);
-        }
+        taskList.forEach((k, v) -> list.add(v));
+        epicList.forEach((k, v) -> list.add(v));
+        subtaskList.forEach((k, v) -> list.add(v));
         return list;
     }
 

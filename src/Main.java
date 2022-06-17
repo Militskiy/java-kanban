@@ -29,6 +29,9 @@ public class Main {
         listEpicsAndSubs(taskManager);
         System.out.println(taskManager.getTaskById("Task-1"));
 
+        System.out.println("\n" + "List every Task Epic and Subtask" + "\n");
+        taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
+
         System.out.println("\n" + "Subtask-1 to DONE" + "\n");
 
         subtask = taskManager.getSubtaskById("Subtask-1");
@@ -49,9 +52,6 @@ public class Main {
         epic.setName("This Epic is DONE");
         epic.setDescription("Testing attribute changes");
         taskManager.updateEpic(epic);
-        subtask = taskManager.getSubtaskById("Subtask-2");
-        subtask.setStatus(Status.IN_PROGRESS);
-        taskManager.updateSubtask(subtask);
         listEpicsAndSubs(taskManager);
 
         System.out.println("\n" + "Deleting Subtask-1 & 2" + "\n");
@@ -112,31 +112,23 @@ public class Main {
 
         System.out.println("\n" + "Showing history" + "\n");
 
-        for (Task task1 : Managers.getDefaultHistory().getHistory()) {
-            System.out.println(task1);
-        }
+        Managers.getDefaultHistory().getHistory().forEach(System.out::println);
 
     }
 
     // Методы вывода на экран списков задач (для тестирования)
     private static void listEpicsAndSubs(TaskManager taskManager) {
-        for (String id : taskManager.listEpics().keySet()) {
-            System.out.println(taskManager.listEpics().get(id));
-            for (String subtaskID : taskManager.listEpicSubtasks(id).keySet()) {
-                System.out.println(taskManager.listEpicSubtasks(id).get(subtaskID));
-            }
-        }
+        taskManager.listEpics().forEach((epicId, epic) -> {
+            System.out.println(epic);
+            taskManager.listEpicSubtasks(epicId).forEach((subId, subtask) -> System.out.println(subtask));
+        });
     }
 
     private static void listTasks(TaskManager taskManager) {
-        for (String id : taskManager.listTasks().keySet()) {
-            System.out.println(taskManager.listTasks().get(id));
-        }
+        taskManager.listTasks().forEach((k, v) -> System.out.println(v));
     }
 
     private static void listAllSubtasks(TaskManager taskManager) {
-        for (String id : taskManager.listAllSubtasks().keySet()) {
-            System.out.println(taskManager.listAllSubtasks().get(id));
-        }
+        taskManager.listAllSubtasks().forEach((k, v) -> System.out.println(v));
     }
 }
