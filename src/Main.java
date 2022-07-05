@@ -28,14 +28,17 @@ public class Main {
         // taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
 
         System.out.println("\n" + "Getting all tasks epics and subtasks");
+        taskManager.getTaskById("Task-10");
         taskManager.getTaskById("Task-1");
         taskManager.getTaskById("Task-1");
         taskManager.getTaskById("Task-2");
         taskManager.getTaskById("Task-2");
+        taskManager.getEpicById("Epic-10");
         taskManager.getEpicById("Epic-1");
         taskManager.getEpicById("Epic-1");
         taskManager.getEpicById("Epic-2");
         taskManager.getEpicById("Epic-2");
+        taskManager.getSubtaskById("Subtask-10");
         taskManager.getSubtaskById("Subtask-1");
         taskManager.getSubtaskById("Subtask-1");
         taskManager.getSubtaskById("Subtask-2");
@@ -56,11 +59,15 @@ public class Main {
 
         System.out.println("\n" + "Deleting Task-2");
         taskManager.deleteTask("Task-2");
+        taskManager.deleteTask("Task-20");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
 
         System.out.println("\n" + "Deleting Epic-1 (and 3 subtasks)");
         taskManager.deleteEpic("Epic-1");
+        taskManager.deleteEpic("Epic-10");
+        taskManager.deleteSubTask("Subtask-99");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
+        taskManager.listEpicSubtasks("Epic-99");
 
     }
 
