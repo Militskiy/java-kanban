@@ -24,12 +24,13 @@ public class InMemoryHistoryManager implements HistoryManager {
     @Override
     public void add(Task task) {
         if (nodeMap.get(task.getId()) == null) {
-            nodeMap.put(task.getId(), historyList.linkLast(task));
+            nodeMap.put(task.getId(), historyList.linkFirst(task));
         } else {
             historyList.removeNode(nodeMap.get(task.getId()));
-            nodeMap.put(task.getId(), historyList.linkLast(task));
+            nodeMap.put(task.getId(), historyList.linkFirst(task));
         }
     }
+
     // Реализация метода удаления задач из истории (список для ускорения методов удаления всех задач)
     @Override
     public void remove(List<String> idList) {
@@ -46,6 +47,19 @@ public class InMemoryHistoryManager implements HistoryManager {
         private Node<T> first;
         private Node<T> last;
 
+        // Внутренний метод добавления элемента в начало списка
+        public Node<T> linkFirst(T element) {
+            final Node<T> oldHead = first;
+            final Node<T> newNode = new Node<>(null, element, oldHead);
+            first = newNode;
+            if (oldHead == null) {
+                last = newNode;
+            } else {
+                oldHead.prev = newNode;
+            }
+            return newNode;
+        }
+
         // Внутренний метод добавления элемента в конец списка
         private Node<T> linkLast(T element) {
             final Node<T> oldLast = last;
@@ -58,6 +72,7 @@ public class InMemoryHistoryManager implements HistoryManager {
             }
             return newNode;
         }
+
         // Внутренний метод получения списка задач в истории
         private ArrayList<Task> getTasks() {
             ArrayList<Task> result = new ArrayList<>();
