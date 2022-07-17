@@ -10,18 +10,18 @@ public final class IdGenerator {
     private static int id;
 
     // Метод генерирования ИД в зависимости от типов задач
-    public static String generateID(String taskType) {
-        switch (taskType) {
-            case "Task":
+    public static String generateID(TaskType type) {
+        switch (type) {
+            case TASK:
                 id = ++taskIdNum;
                 break;
-            case "Epic":
+            case EPIC:
                 id = ++epicIdNum;
                 break;
-            case "Subtask":
+            case SUBTASK:
                 id = ++subtaskIdNum;
                 break;
         }
-        return (taskType + "-" + id);
+        return (type + "-" + id);
     }
 }

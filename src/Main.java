@@ -35,23 +35,23 @@ public class Main {
         taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
 
         System.out.println("\n" + "Getting all tasks epics and subtasks");
-        taskManager.getTaskById("Task-10");
-        taskManager.getTaskById("Task-1");
-        taskManager.getTaskById("Task-1");
-        taskManager.getTaskById("Task-2");
-        taskManager.getTaskById("Task-2");
-        taskManager.getEpicById("Epic-10");
-        taskManager.getEpicById("Epic-1");
-        taskManager.getEpicById("Epic-1");
-        taskManager.getEpicById("Epic-2");
-        taskManager.getEpicById("Epic-2");
-        taskManager.getSubtaskById("Subtask-10");
-        taskManager.getSubtaskById("Subtask-1");
-        taskManager.getSubtaskById("Subtask-1");
-        taskManager.getSubtaskById("Subtask-2");
-        taskManager.getSubtaskById("Subtask-2");
-        taskManager.getSubtaskById("Subtask-3");
-        taskManager.getSubtaskById("Subtask-3");
+        taskManager.getTaskById("TASK-10");
+        taskManager.getTaskById("TASK-1");
+        taskManager.getTaskById("TASK-1");
+        taskManager.getTaskById("TASK-2");
+        taskManager.getTaskById("TASK-2");
+        taskManager.getEpicById("EPIC-10");
+        taskManager.getEpicById("EPIC-1");
+        taskManager.getEpicById("EPIC-1");
+        taskManager.getEpicById("EPIC-2");
+        taskManager.getEpicById("EPIC-2");
+        taskManager.getSubtaskById("SUBTASK-10");
+        taskManager.getSubtaskById("SUBTASK-1");
+        taskManager.getSubtaskById("SUBTASK-1");
+        taskManager.getSubtaskById("SUBTASK-2");
+        taskManager.getSubtaskById("SUBTASK-2");
+        taskManager.getSubtaskById("SUBTASK-3");
+        taskManager.getSubtaskById("SUBTASK-3");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
     }
 
