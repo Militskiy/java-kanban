@@ -53,16 +53,6 @@ public class Main {
         taskManager.getSubtaskById("Subtask-3");
         taskManager.getSubtaskById("Subtask-3");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
-
-        System.out.println("\n" + "Getting all tasks epics and subtasks in reverse order");
-        taskManager.getSubtaskById("Subtask-3");
-        taskManager.getSubtaskById("Subtask-2");
-        taskManager.getSubtaskById("Subtask-1");
-        taskManager.getEpicById("Epic-2");
-        taskManager.getEpicById("Epic-1");
-        taskManager.getTaskById("Task-2");
-        taskManager.getTaskById("Task-1");
-        Managers.getDefaultHistory().getHistory().forEach(System.out::println);
     }
 
     // Методы вывода на экран списков задач (для тестирования)

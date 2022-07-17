@@ -10,7 +10,6 @@ import static managers.util.Constants.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-
     public static void main(String[] args) {
         // Для генерации CSV запускать class Main
 
@@ -24,17 +23,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
     }
 
-    // Метод сохранения состояния в CSV
-    public void save() {
-        try {
-            FileSaver.saveState(listEveryTaskAndEpicAndSubtask(), Managers.getDefaultHistory().getHistory());
-        } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
     // Метод загрузки из файла
-    static FileBackedTasksManager loadFromFile() {
+    public static FileBackedTasksManager loadFromFile() {
         FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
         for (int i = 0; i < StateLoader.loadTaskState().size(); i++) {
             taskFromString(StateLoader.loadTaskState().get(i), fileBackedTasksManager);
@@ -119,20 +109,23 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     @Override
     public Task getTaskById(String id) {
+        Task task = super.getTaskById(id);
         save();
-        return super.getTaskById(id);
+        return task;
     }
 
     @Override
     public Epic getEpicById(String id) {
+        Epic epic = super.getEpicById(id);
         save();
-        return super.getEpicById(id);
+        return epic;
     }
 
     @Override
     public Subtask getSubtaskById(String id) {
+        Subtask subtask = super.getSubtaskById(id);
         save();
-        return super.getSubtaskById(id);
+        return subtask;
     }
 
     // Метод загрузки задач из строки
@@ -143,7 +136,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         stringArray[2], stringArray[4], Status.valueOf(stringArray[3])));
                 break;
             case EPIC:
-                fileBackedTasksManager.epicList.put(stringArray[0], new Epic(stringArray[0], EPIC, stringArray[2], stringArray[4], Status.valueOf(stringArray[3])));
+                fileBackedTasksManager.epicList.put(stringArray[0], new Epic(stringArray[0], EPIC,
+                        stringArray[2], stringArray[4], Status.valueOf(stringArray[3])));
                 break;
             case SUBTASK:
                 fileBackedTasksManager.subtaskList.put(stringArray[0], new Subtask(stringArray[0], SUBTASK,
@@ -165,6 +159,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             case SUBTASK:
                 fileBackedTasksManager.getSubtaskById(stringArray[0]);
                 break;
+        }
+    }
+    // Метод сохранения состояния в CSV
+    private void save() {
+        try {
+            FileSaver.saveState(listEveryTaskAndEpicAndSubtask(), Managers.getDefaultHistory().getHistory());
+        } catch (ManagerSaveException e) {
+            throw new RuntimeException(e);
         }
     }
 }
