@@ -8,9 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 public class InMemoryTaskManager implements TaskManager {
-    private final LinkedHashMap<String, Task> taskList = new LinkedHashMap<>();
-    private final LinkedHashMap<String, Epic> epicList = new LinkedHashMap<>();
-    private final LinkedHashMap<String, Subtask> subtaskList = new LinkedHashMap<>();
+    protected final LinkedHashMap<String, Task> taskList = new LinkedHashMap<>();
+    protected final LinkedHashMap<String, Epic> epicList = new LinkedHashMap<>();
+    protected final LinkedHashMap<String, Subtask> subtaskList = new LinkedHashMap<>();
 
     // Метод добавления Subtask
     @Override
@@ -100,7 +100,7 @@ public class InMemoryTaskManager implements TaskManager {
             List<String> ids = new ArrayList<>(List.of(id));
             epicList.get(id).getSubtaskList().forEach(subtask -> {
                 ids.add(subtask.getId());
-                subtaskList.remove(id);
+                subtaskList.remove(subtask.getId());
             });
             Managers.getDefaultHistory().remove(ids);
             epicList.remove(id);

@@ -13,7 +13,7 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     // Реализация метода вывода истории задач
     @Override
-    public ArrayList<Task> getHistory() {
+    public List<Task> getHistory() {
         return new ArrayList<>(historyList.getTasks());
     }
 

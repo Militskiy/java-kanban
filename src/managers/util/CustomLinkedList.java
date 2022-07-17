@@ -76,6 +76,7 @@ public class CustomLinkedList<T extends Task> {
         }
         node.data = null;
     }
+
     private static class Node<E extends Task> {
         public E data;
         public Node<E> next;

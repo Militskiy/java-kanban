@@ -1,0 +1,15 @@
+id,type,name,status,description,epic
+Task-1,TASK,Task-1,NEW,description
+Task-2,TASK,Task-2,NEW,description
+Epic-1,EPIC,Epic-1,NEW,description
+Epic-2,EPIC,Epic-2,NEW,description
+Subtask-1,SUBTASK,Subtask-1,NEW,description,Epic-1
+Subtask-2,SUBTASK,Subtask-2,NEW,description,Epic-1
+Subtask-3,SUBTASK,Subtask-3,NEW,description,Epic-1
+
+Epic-1,EPIC,Epic-1,NEW,description
+Epic-2,EPIC,Epic-2,NEW,description
+Subtask-1,SUBTASK,Subtask-1,NEW,description,Epic-1
+Subtask-2,SUBTASK,Subtask-2,NEW,description,Epic-1
+Subtask-3,SUBTASK,Subtask-3,NEW,description,Epic-1
+Task-1,TASK,Task-1,NEW,description

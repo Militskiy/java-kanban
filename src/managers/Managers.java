@@ -1,10 +1,10 @@
 package managers;
 
 public final class Managers {
-    private static final TaskManager TASK_MANAGER = new InMemoryTaskManager();
+    private static final TaskManager TASK_MANAGER = new FileBackedTasksManager();
     private static final HistoryManager HISTORY_MANAGER = new InMemoryHistoryManager();
 
-    // Приватный констуктор для защиты от создания экземпляров класса
+    // Приватный конструктор для защиты от создания экземпляров класса
     private Managers() {
     }
 
