@@ -1,6 +1,7 @@
 package managers;
 
 import managers.util.*;
+import managers.util.IdGenerator;
 import tasks.*;
 
 import java.util.ArrayList;

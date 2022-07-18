@@ -1,11 +1,12 @@
 package tasks;
 
-import managers.util.Constants;
 import managers.util.Status;
 import managers.util.TaskType;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import static managers.util.Constants.DELIMITER;
 
 public class Epic extends Task {
 
@@ -29,10 +30,10 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return id + Constants.DELIMITER +
-                type + Constants.DELIMITER +
-                name + Constants.DELIMITER +
-                status + Constants.DELIMITER +
+        return id + DELIMITER +
+                type + DELIMITER +
+                name + DELIMITER +
+                status + DELIMITER +
                 description;
     }
 }
