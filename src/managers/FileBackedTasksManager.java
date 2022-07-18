@@ -27,7 +27,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Метод загрузки из файла
     public static FileBackedTasksManager loadFromFile() {
-        FileBackedTasksManager fileBackedTasksManager = new FileBackedTasksManager();
+        FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.getDefault();
         for (int i = 0; i < StateLoader.loadTaskState().size(); i++) {
             taskFromString(StateLoader.loadTaskState().get(i), fileBackedTasksManager);
         }
