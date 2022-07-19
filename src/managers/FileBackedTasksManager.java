@@ -16,13 +16,26 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         // Для генерации CSV запускать class Main
 
         System.out.println(NEXT_LINE + "Loading Data");
-        FileBackedTasksManager tm = loadFromFile();
+        FileBackedTasksManager taskManager = loadFromFile();
+
+        System.out.println("\n" + "Adding 1 Task, 1 Epic, 1 Subtask");
+        Task task = new Task(null, TaskType.TASK, "Task-3", "description", Status.NEW);
+        taskManager.addTask(task);
+        Epic epic = new Epic(null, TaskType.EPIC, "Epic-3", "description");
+        taskManager.addEpic(epic);
+        Subtask subtask = new Subtask(null, TaskType.SUBTASK, "Subtask-4", "description",
+                Status.NEW, epic);
+        taskManager.addSubTask(subtask);
+        taskManager.getTaskById("TASK-3");
+        taskManager.getEpicById("EPIC-3");
+        taskManager.getSubtaskById("SUBTASK-4");
 
         System.out.println(NEXT_LINE + "List every Task, Epic and Subtask");
-        tm.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
+        taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
 
         System.out.println(NEXT_LINE + "Showing loaded history");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
+
     }
 
     // Метод загрузки из файла
@@ -34,6 +47,21 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         for (int i = StateLoader.loadHistoryState().size() - 1; i > -1; i--) {
             historyFromString(StateLoader.loadHistoryState().get(i), fileBackedTasksManager);
         }
+        fileBackedTasksManager.taskList.keySet().forEach(id -> {
+            if (IdGenerator.getTaskIdNum() < Integer.parseInt(id.substring(5))) {
+                IdGenerator.setTaskIdNum(Integer.parseInt(id.substring(5)));
+            }
+        });
+        fileBackedTasksManager.epicList.keySet().forEach(id -> {
+            if (IdGenerator.getEpicIdNum() < Integer.parseInt(id.substring(5))) {
+                IdGenerator.setEpicIdNum(Integer.parseInt(id.substring(5)));
+            }
+        });
+        fileBackedTasksManager.subtaskList.keySet().forEach(id -> {
+            if (IdGenerator.getSubtaskIdNum() < Integer.parseInt(id.substring(8))) {
+                IdGenerator.setSubtaskIdNum(Integer.parseInt(id.substring(8)));
+            }
+        });
         return fileBackedTasksManager;
     }
 
