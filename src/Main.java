@@ -1,8 +1,8 @@
 import managers.Managers;
 import managers.TaskManager;
-import managers.util.TaskType;
+import tasks.util.TaskType;
 import tasks.*;
-import managers.util.Status;
+import tasks.util.Status;
 
 public class Main {
 
@@ -35,25 +35,13 @@ public class Main {
         taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
 
         System.out.println("\n" + "Getting all tasks epics and subtasks");
-        taskManager.listEveryTaskAndEpicAndSubtask().forEach(v -> {
-            switch (v.getType()) {
-                case TASK:
-                    taskManager.getTaskById(v.getId());
-                    break;
-                case EPIC:
-                    taskManager.getEpicById(v.getId());
-                    break;
-                case SUBTASK:
-                    taskManager.getSubtaskById(v.getId());
-                    break;
-            }
-        });
+        requestAllTasks(taskManager);
 
         System.out.println("\n" + "Showing history");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
     }
 
-    // Методы вывода на экран списков задач (для тестирования)
+    // Методы для тестирования
     private static void listEpicsAndSubs(TaskManager taskManager) {
         taskManager.listEpics().forEach((epicId, epic) -> {
             System.out.println(epic);
@@ -67,5 +55,21 @@ public class Main {
 
     private static void listAllSubtasks(TaskManager taskManager) {
         taskManager.listAllSubtasks().forEach((id, subtask) -> System.out.println(subtask));
+    }
+
+    private static void requestAllTasks(TaskManager taskManager) {
+        taskManager.listEveryTaskAndEpicAndSubtask().forEach(v -> {
+            switch (v.getType()) {
+                case TASK:
+                    taskManager.getTaskById(v.getId());
+                    break;
+                case EPIC:
+                    taskManager.getEpicById(v.getId());
+                    break;
+                case SUBTASK:
+                    taskManager.getSubtaskById(v.getId());
+                    break;
+            }
+        });
     }
 }

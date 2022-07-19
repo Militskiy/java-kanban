@@ -1,13 +1,13 @@
 package managers;
 
-import managers.util.*;
+import managers.exceptions.ManagerSaveException;
 import managers.util.FileSaver;
 import managers.util.StateLoader;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
+import tasks.util.Status;
+import tasks.util.TaskType;
 
-import static managers.util.TaskType.*;
+import static tasks.util.TaskType.*;
 import static managers.util.Constants.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
@@ -33,6 +33,11 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(NEXT_LINE + "Showing loaded history");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
 
+        System.out.println(NEXT_LINE + "Requesting new tasks and showing loaded + newly added history");
+        taskManager.getTaskById(task.getId());
+        taskManager.getEpicById(epic.getId());
+        taskManager.getSubtaskById(subtask.getId());
+        Managers.getDefaultHistory().getHistory().forEach(System.out::println);
     }
 
     // Метод загрузки из файла

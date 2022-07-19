@@ -1,7 +1,7 @@
 package tasks;
 
-import managers.util.Status;
-import managers.util.TaskType;
+import tasks.util.Status;
+import tasks.util.TaskType;
 
 public class Task {
 

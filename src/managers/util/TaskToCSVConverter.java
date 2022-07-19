@@ -5,10 +5,10 @@ import tasks.Task;
 
 import static managers.util.Constants.DELIMITER;
 
-public final class TaskToCSVString {
-    private TaskToCSVString() {
+public final class TaskToCSVConverter {
+    private TaskToCSVConverter() {
     }
-    public static String taskToCSVString(Task task) {
+    public static String convertTaskToCSV(Task task) {
         if (task.getClass().equals(Subtask.class)) {
             return task.getId() + DELIMITER +
                     task.getType() + DELIMITER +

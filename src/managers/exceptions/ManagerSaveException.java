@@ -1,4 +1,4 @@
-package managers.util;
+package managers.exceptions;
 
 import java.io.IOException;
 

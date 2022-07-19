@@ -1,4 +1,4 @@
-package managers.util;
+package tasks.util;
 
 public enum TaskType {
     // Типы задач

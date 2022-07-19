@@ -1,4 +1,4 @@
-package managers.util;
+package tasks.util;
 
 public enum Status {
     // Класс перечисление статусов
