@@ -14,10 +14,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     public static void main(String[] args) {
         // Для генерации CSV запускать class Main
-
         System.out.println(NEXT_LINE + "Loading Data");
         FileBackedTasksManager taskManager = loadFromFile();
 
+        // Проверка, что после загрузки данных из файла, корректно работает добавление новых задач
         System.out.println("\n" + "Adding 1 Task, 1 Epic, 1 Subtask");
         Task task = new Task(null, TaskType.TASK, "Task-3", "description", Status.NEW);
         taskManager.addTask(task);
