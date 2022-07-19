@@ -12,21 +12,21 @@ public class Main {
 
         // Тестирования запросов условного "Фронта"
         System.out.println("\n" + "Adding 2 Tasks, 2 Epics, 3 Subtasks");
-        Task task1 = new Task(null, TaskType.TASK, "Task-1", "description", Status.NEW);
+        Task task1 = new Task(null, TaskType.TASK, "Task-1", "New Task-1", Status.NEW);
         taskManager.addTask(task1);
-        Task task2 = new Task(null, TaskType.TASK, "Task-2", "description", Status.NEW);
+        Task task2 = new Task(null, TaskType.TASK, "Task-2", "New Task-2", Status.NEW);
         taskManager.addTask(task2);
-        Epic epic1 = new Epic(null, TaskType.EPIC, "Epic-1", "description");
+        Epic epic1 = new Epic(null, TaskType.EPIC, "Epic-1", "New Epic-1");
         taskManager.addEpic(epic1);
-        Epic epic2 = new Epic(null, TaskType.EPIC, "Epic-2", "description");
+        Epic epic2 = new Epic(null, TaskType.EPIC, "Epic-2", "New Epic-2");
         taskManager.addEpic(epic2);
-        Subtask subtask1 = new Subtask(null, TaskType.SUBTASK, "Subtask-1", "description",
+        Subtask subtask1 = new Subtask(null, TaskType.SUBTASK, "Subtask-1", "New Subtask-1",
                 Status.NEW, epic1);
         taskManager.addSubTask(subtask1);
-        Subtask subtask2 = new Subtask(null, TaskType.SUBTASK, "Subtask-2", "description",
+        Subtask subtask2 = new Subtask(null, TaskType.SUBTASK, "Subtask-2", "New Subtask-2",
                 Status.NEW, epic1);
         taskManager.addSubTask(subtask2);
-        Subtask subtask3= new Subtask(null, TaskType.SUBTASK, "Subtask-3", "description",
+        Subtask subtask3= new Subtask(null, TaskType.SUBTASK, "Subtask-3", "New Subtask-3",
                 Status.NEW, epic1);
         taskManager.addSubTask(subtask3);
         // taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
@@ -35,23 +35,21 @@ public class Main {
         taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
 
         System.out.println("\n" + "Getting all tasks epics and subtasks");
-        taskManager.getTaskById("TASK-10");
-        taskManager.getTaskById("TASK-1");
-        taskManager.getTaskById("TASK-1");
-        taskManager.getTaskById("TASK-2");
-        taskManager.getTaskById("TASK-2");
-        taskManager.getEpicById("EPIC-10");
-        taskManager.getEpicById("EPIC-1");
-        taskManager.getEpicById("EPIC-1");
-        taskManager.getEpicById("EPIC-2");
-        taskManager.getEpicById("EPIC-2");
-        taskManager.getSubtaskById("SUBTASK-10");
-        taskManager.getSubtaskById("SUBTASK-1");
-        taskManager.getSubtaskById("SUBTASK-1");
-        taskManager.getSubtaskById("SUBTASK-2");
-        taskManager.getSubtaskById("SUBTASK-2");
-        taskManager.getSubtaskById("SUBTASK-3");
-        taskManager.getSubtaskById("SUBTASK-3");
+        taskManager.listEveryTaskAndEpicAndSubtask().forEach(v -> {
+            switch (v.getType()) {
+                case TASK:
+                    taskManager.getTaskById(v.getId());
+                    break;
+                case EPIC:
+                    taskManager.getEpicById(v.getId());
+                    break;
+                case SUBTASK:
+                    taskManager.getSubtaskById(v.getId());
+                    break;
+            }
+        });
+
+        System.out.println("\n" + "Showing history");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
     }
 

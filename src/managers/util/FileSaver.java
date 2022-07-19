@@ -19,11 +19,11 @@ public final class FileSaver {
         try (FileWriter fileWriter = new FileWriter(FILEPATH, StandardCharsets.UTF_8)) {
             fileWriter.write("id,type,name,status,description,epic" + NEXT_LINE);
             for (Task task : list) {
-                fileWriter.write(task.toString() + NEXT_LINE);
+                fileWriter.write(TaskToCSVString.taskToCSVString(task) + NEXT_LINE);
             }
             fileWriter.append(NEXT_LINE);
             for (int i = 0; i < history.size(); i++) {
-                fileWriter.append(history.get(i).toString());
+                fileWriter.append(TaskToCSVString.taskToCSVString(history.get(i)));
                 if (i < history.size() - 1) {
                     fileWriter.append(NEXT_LINE);
                 }

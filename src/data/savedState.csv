@@ -1,16 +1,19 @@
 id,type,name,status,description,epic
-TASK-1,TASK,Task-1,NEW,description
-TASK-2,TASK,Task-2,NEW,description
-EPIC-1,EPIC,Epic-1,NEW,description
-EPIC-2,EPIC,Epic-2,NEW,description
-SUBTASK-1,SUBTASK,Subtask-1,NEW,description,EPIC-1
-SUBTASK-2,SUBTASK,Subtask-2,NEW,description,EPIC-1
-SUBTASK-3,SUBTASK,Subtask-3,NEW,description,EPIC-1
+fdbfbedc-b576-455d-bf87-37bb400d4544,TASK,Task-1,NEW,New Task-1
+a275fc1e-3abc-49b8-adc4-b080c1f33cdf,TASK,Task-2,NEW,New Task-2
+bf9f78c4-03d6-4ba4-a784-484564221804,TASK,New Task,NEW,added after loading
+99026c87-442c-4740-a1dc-c2f86a161de7,EPIC,Epic-1,NEW,New Epic-1
+df2c22e0-3a14-482c-88c4-6156fe7cb892,EPIC,Epic-2,NEW,New Epic-2
+6f3e0f6a-b68a-49db-ba26-78322887e9dc,EPIC,New Epic,NEW,added after loading
+7e669399-e815-4a61-a113-3e1cdec9869f,SUBTASK,Subtask-1,NEW,New Subtask-1,99026c87-442c-4740-a1dc-c2f86a161de7
+d0e9bf98-f718-4a3a-95ea-716bd7c70977,SUBTASK,Subtask-2,NEW,New Subtask-2,99026c87-442c-4740-a1dc-c2f86a161de7
+53d804d8-1d16-4c8c-8230-2847e708624c,SUBTASK,Subtask-3,NEW,New Subtask-3,99026c87-442c-4740-a1dc-c2f86a161de7
+f6279cf5-d4aa-4a14-a784-7966ed0949b9,SUBTASK,New Subtask,NEW,added after loading,6f3e0f6a-b68a-49db-ba26-78322887e9dc
 
-SUBTASK-3,SUBTASK,Subtask-3,NEW,description,EPIC-1
-SUBTASK-2,SUBTASK,Subtask-2,NEW,description,EPIC-1
-SUBTASK-1,SUBTASK,Subtask-1,NEW,description,EPIC-1
-EPIC-2,EPIC,Epic-2,NEW,description
-EPIC-1,EPIC,Epic-1,NEW,description
-TASK-2,TASK,Task-2,NEW,description
-TASK-1,TASK,Task-1,NEW,description
+53d804d8-1d16-4c8c-8230-2847e708624c,SUBTASK,Subtask-3,NEW,New Subtask-3,99026c87-442c-4740-a1dc-c2f86a161de7
+d0e9bf98-f718-4a3a-95ea-716bd7c70977,SUBTASK,Subtask-2,NEW,New Subtask-2,99026c87-442c-4740-a1dc-c2f86a161de7
+7e669399-e815-4a61-a113-3e1cdec9869f,SUBTASK,Subtask-1,NEW,New Subtask-1,99026c87-442c-4740-a1dc-c2f86a161de7
+df2c22e0-3a14-482c-88c4-6156fe7cb892,EPIC,Epic-2,NEW,New Epic-2
+99026c87-442c-4740-a1dc-c2f86a161de7,EPIC,Epic-1,NEW,New Epic-1
+a275fc1e-3abc-49b8-adc4-b080c1f33cdf,TASK,Task-2,NEW,New Task-2
+fdbfbedc-b576-455d-bf87-37bb400d4544,TASK,Task-1,NEW,New Task-1

@@ -16,7 +16,7 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод добавления Subtask
     @Override
     public void addSubTask(Subtask subtask) {
-        subtask.setId(IdGenerator.generateID(TaskType.SUBTASK));
+        subtask.setId(IdGenerator.generateID());
         subtaskList.put(subtask.getId(), subtask);
         epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
         updateEpicStatus(subtask);
@@ -54,7 +54,7 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод добавления Task
     @Override
     public void addTask(Task task) {
-        task.setId(IdGenerator.generateID(TaskType.TASK));
+        task.setId(IdGenerator.generateID());
         taskList.put(task.getId(), task);
     }
 
@@ -82,7 +82,7 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод добавления Epic
     @Override
     public void addEpic(Epic epic) {
-        epic.setId(IdGenerator.generateID(TaskType.EPIC));
+        epic.setId(IdGenerator.generateID());
         epic.setStatus(Status.NEW);
         epicList.put(epic.getId(), epic);
     }

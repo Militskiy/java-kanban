@@ -6,8 +6,6 @@ import managers.util.TaskType;
 import java.util.ArrayList;
 import java.util.List;
 
-import static managers.util.Constants.DELIMITER;
-
 public class Epic extends Task {
 
     private final List<Subtask> subtaskList = new ArrayList<>();
@@ -30,10 +28,10 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return id + DELIMITER +
-                type + DELIMITER +
-                name + DELIMITER +
-                status + DELIMITER +
-                description;
+        return "ID: " + id + " {" +
+                "Type: " + type + " | " +
+                "Name: "+ name + " | " +
+                "Status: " + status + " | " +
+                "Description: " + description + "}";
     }
 }

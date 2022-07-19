@@ -3,8 +3,6 @@ package tasks;
 import managers.util.Status;
 import managers.util.TaskType;
 
-import static managers.util.Constants.DELIMITER;
-
 public class Subtask extends Task {
 
     private final Epic epic;
@@ -20,11 +18,11 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return id + DELIMITER +
-                type + DELIMITER +
-                name + DELIMITER +
-                status + DELIMITER +
-                description + DELIMITER +
-                epic.getId();
+        return "ID: " + id + " {" +
+                "Type: " + type + " | " +
+                "Name: " + name + " | " +
+                "Status: " + status + " | " +
+                "Description: " + description + " | " +
+                "Epic ID: " + epic.getId() + "}";
     }
 }

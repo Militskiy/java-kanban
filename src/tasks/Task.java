@@ -3,8 +3,6 @@ package tasks;
 import managers.util.Status;
 import managers.util.TaskType;
 
-import static managers.util.Constants.DELIMITER;
-
 public class Task {
 
     protected String id;
@@ -36,6 +34,14 @@ public class Task {
         return type;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
     public void setName(String name) {
         this.name = name;
     }
@@ -58,10 +64,10 @@ public class Task {
 
     @Override
     public String toString() {
-        return id + DELIMITER +
-                type + DELIMITER +
-                name + DELIMITER +
-                status + DELIMITER +
-                description;
+        return "ID: " + id + " {" +
+                "Type: " + type + " | " +
+                "Name: " + name + " | " +
+                "Status: " + status + " | " +
+                "Description: " + description + "}";
     }
 }
