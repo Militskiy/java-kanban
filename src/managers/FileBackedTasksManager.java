@@ -1,21 +1,27 @@
 package managers;
 
 import managers.exceptions.ManagerSaveException;
-import managers.util.FileSaver;
+import managers.util.StateSaver;
 import managers.util.StateLoader;
 import tasks.*;
 import tasks.util.Status;
 import tasks.util.TaskType;
+
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import static tasks.util.TaskType.*;
 import static managers.util.Constants.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 
-    public static void main(String[] args) {
+    private static final Path FILE = Paths.get(DEFAULT_FILE_PATH);
+
+    public static void main(String[] args) throws NoSuchFileException {
         // Для генерации CSV запускать class Main
         System.out.println(NEXT_LINE + "Loading Data");
-        FileBackedTasksManager taskManager = loadFromFile();
+        FileBackedTasksManager taskManager = loadFromFile(FILE);
 
         // Проверка, что после загрузки данных из файла, корректно работает добавление новых задач
         System.out.println("\n" + "Adding 1 Task, 1 Epic, 1 Subtask");
@@ -33,21 +39,28 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         System.out.println(NEXT_LINE + "Showing loaded history");
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
 
-        System.out.println(NEXT_LINE + "Requesting new tasks and showing loaded + newly added history");
+        System.out.println(NEXT_LINE + "Showing loaded history + newly added and requested tasks");
         taskManager.getTaskById(task.getId());
         taskManager.getEpicById(epic.getId());
         taskManager.getSubtaskById(subtask.getId());
         Managers.getDefaultHistory().getHistory().forEach(System.out::println);
+
+        System.out.println(NEXT_LINE + "Testing Epics subtask list");
+        taskManager.listEpics().forEach((k, v) -> {
+            System.out.println(v.getType() + " ID: " + v.getId());
+            v.getSubtaskList().forEach((value) -> System.out.println(value.getType() + " " + value));
+            System.out.println();
+        });
     }
 
     // Метод загрузки из файла
-    public static FileBackedTasksManager loadFromFile() {
+    public static FileBackedTasksManager loadFromFile(Path file) throws NoSuchFileException {
         FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.getDefault();
-        for (int i = 0; i < StateLoader.loadTaskState().size(); i++) {
-            taskFromString(StateLoader.loadTaskState().get(i), fileBackedTasksManager);
+        for (int i = 0; i < StateLoader.loadTaskState(file).size(); i++) {
+            restoreTaskFromString(StateLoader.loadTaskState(file).get(i), fileBackedTasksManager);
         }
-        for (int i = StateLoader.loadHistoryState().size() - 1; i > -1; i--) {
-            historyFromString(StateLoader.loadHistoryState().get(i), fileBackedTasksManager);
+        for (int i = StateLoader.loadHistoryState(file).size() - 1; i > -1; i--) {
+            restoreHistoryFromString(StateLoader.loadHistoryState(file).get(i), fileBackedTasksManager);
         }
         return fileBackedTasksManager;
     }
@@ -146,7 +159,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     // Метод загрузки задач из строки
-    private static void taskFromString(String[] stringArray, FileBackedTasksManager fileBackedTasksManager) {
+    private static void restoreTaskFromString(String[] stringArray, FileBackedTasksManager fileBackedTasksManager) {
         switch (TaskType.valueOf(stringArray[1])) {
             case TASK:
                 fileBackedTasksManager.taskList.put(stringArray[0], new Task(stringArray[0], TASK,
@@ -157,15 +170,16 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                         stringArray[2], stringArray[4], Status.valueOf(stringArray[3])));
                 break;
             case SUBTASK:
-                fileBackedTasksManager.subtaskList.put(stringArray[0], new Subtask(stringArray[0], SUBTASK,
-                        stringArray[2], stringArray[4], Status.valueOf(stringArray[3]),
-                        fileBackedTasksManager.epicList.get(stringArray[5])));
+                Subtask subtask = new Subtask(stringArray[0], SUBTASK, stringArray[2], stringArray[4],
+                        Status.valueOf(stringArray[3]), fileBackedTasksManager.epicList.get(stringArray[5]));
+                fileBackedTasksManager.subtaskList.put(subtask.getId(), subtask);
+                fileBackedTasksManager.epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
                 break;
         }
     }
 
     // Метод загрузки истории из строки
-    private static void historyFromString(String[] stringArray, FileBackedTasksManager fileBackedTasksManager) {
+    private static void restoreHistoryFromString(String[] stringArray, FileBackedTasksManager fileBackedTasksManager) {
         switch (TaskType.valueOf(stringArray[1])) {
             case TASK:
                 fileBackedTasksManager.getTaskById(stringArray[0]);
@@ -178,12 +192,14 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 break;
         }
     }
+
     // Метод сохранения состояния в CSV
     private void save() {
         try {
-            FileSaver.saveState(listEveryTaskAndEpicAndSubtask(), Managers.getDefaultHistory().getHistory());
+            StateSaver.saveState(listEveryTaskAndEpicAndSubtask(), Managers.getDefaultHistory().getHistory());
         } catch (ManagerSaveException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            System.exit(1);
         }
     }
 }

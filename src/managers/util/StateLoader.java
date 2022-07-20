@@ -3,7 +3,8 @@ package managers.util;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,21 +20,21 @@ public final class StateLoader {
     private static String[] loadedData;
     private static boolean isDataLoaded = false;
 
-    private static void loadState() {
+    private static void loadState(Path file) throws NoSuchFileException {
         try {
-            loadedData = Files.readString(Paths.get(FILEPATH), StandardCharsets.UTF_8).split(NEXT_LINE);
+            loadedData = Files.readString(file, StandardCharsets.UTF_8).split(NEXT_LINE);
             for (int i = 0; i < loadedData.length; i++) {
                 if (loadedData[i].isBlank()) {
                     cutoffIndex = i;
                 }
             }
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new NoSuchFileException(e.getMessage());
         }
     }
-    public static List<String[]> loadTaskState() {
+    public static List<String[]> loadTaskState(Path file) throws NoSuchFileException {
         if (!isDataLoaded) {
-            loadState();
+            loadState(file);
             isDataLoaded = true;
         }
         List<String[]> result = new ArrayList<>();
@@ -43,9 +44,9 @@ public final class StateLoader {
         result.remove(0);
         return result;
     }
-    public static List<String[]> loadHistoryState() {
+    public static List<String[]> loadHistoryState(Path file) throws NoSuchFileException {
         if (!isDataLoaded) {
-            loadState();
+            loadState(file);
             isDataLoaded = true;
         }
         List<String[]> result = new ArrayList<>();
