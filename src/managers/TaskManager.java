@@ -4,6 +4,7 @@ import tasks.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Set;
 
 public interface TaskManager {
     // Метод добавления tasks.Subtask
@@ -64,4 +65,5 @@ public interface TaskManager {
 
     // Метод вывода сразу всех задач, эпиков и подзадач
     List<Task> listEveryTaskAndEpicAndSubtask();
+    Set<Task> listPrioritizedTasks();
 }

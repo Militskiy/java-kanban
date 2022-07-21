@@ -10,6 +10,7 @@ import tasks.util.TaskType;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.time.LocalDateTime;
 
 import static tasks.util.TaskType.*;
 import static managers.util.Constants.*;
@@ -25,12 +26,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
         // Проверка, что после загрузки данных из файла, корректно работает добавление новых задач
         System.out.println("\n" + "Adding 1 Task, 1 Epic, 1 Subtask");
-        Task task = new Task(null, TaskType.TASK, "New Task", "added after loading", Status.NEW);
+        Task task = new Task(null, TaskType.TASK, "New Task", "added after loading",
+                Status.NEW, LocalDateTime.of(2022, 7, 21, 23, 20), 600);
         taskManager.addTask(task);
         Epic epic = new Epic(null, TaskType.EPIC, "New Epic", "added after loading");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask(null, TaskType.SUBTASK, "New Subtask", "added after loading",
-                Status.NEW, epic);
+                Status.NEW, epic, LocalDateTime.of(2022, 7, 21, 23, 21), 600);
         taskManager.addSubTask(subtask);
 
         System.out.println(NEXT_LINE + "List every Task, Epic and Subtask");
@@ -51,6 +53,8 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
             v.getSubtaskList().forEach((value) -> System.out.println(value.getType() + " " + value));
             System.out.println();
         });
+        System.out.println("\n" + "Sorted List");
+        taskManager.listPrioritizedTasks().forEach(System.out::println);
     }
 
     // Метод загрузки из файла
@@ -162,20 +166,31 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static void restoreTaskFromString(String[] stringArray, FileBackedTasksManager fileBackedTasksManager) {
         switch (TaskType.valueOf(stringArray[1])) {
             case TASK:
-                fileBackedTasksManager.taskList.put(stringArray[0], new Task(stringArray[0], TASK,
-                        stringArray[2], stringArray[4], Status.valueOf(stringArray[3])));
+                Task task = new Task(stringArray[0], TASK, stringArray[2], stringArray[4], Status.valueOf(stringArray[3]), returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7]));
+                fileBackedTasksManager.taskList.put(stringArray[0], task);
+                fileBackedTasksManager.updateSortedByStartDateList(task);
                 break;
             case EPIC:
-                fileBackedTasksManager.epicList.put(stringArray[0], new Epic(stringArray[0], EPIC,
-                        stringArray[2], stringArray[4], Status.valueOf(stringArray[3])));
+                Epic epic = new Epic(stringArray[0], EPIC, stringArray[2], stringArray[4], Status.valueOf(stringArray[3]),
+                        returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7]),
+                        calculateEndDate(returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7])));
+                fileBackedTasksManager.epicList.put(stringArray[0], epic);
                 break;
             case SUBTASK:
                 Subtask subtask = new Subtask(stringArray[0], SUBTASK, stringArray[2], stringArray[4],
-                        Status.valueOf(stringArray[3]), fileBackedTasksManager.epicList.get(stringArray[5]));
+                        Status.valueOf(stringArray[3]), fileBackedTasksManager.epicList.get(stringArray[5]), returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7]));
                 fileBackedTasksManager.subtaskList.put(subtask.getId(), subtask);
                 fileBackedTasksManager.epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
+                fileBackedTasksManager.updateSortedByStartDateList(subtask);
                 break;
         }
+    }
+
+    private static LocalDateTime calculateEndDate(LocalDateTime date, long duration) {
+        if (date == null) {
+            return null;
+        }
+        return date.plusMinutes(duration);
     }
 
     // Метод загрузки истории из строки
@@ -191,6 +206,13 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
                 fileBackedTasksManager.getSubtaskById(stringArray[0]);
                 break;
         }
+    }
+
+    private static LocalDateTime returnDateOrNull(String string) {
+        if (string.equals("null")) {
+            return null;
+        }
+        return LocalDateTime.parse(string);
     }
 
     // Метод сохранения состояния в CSV

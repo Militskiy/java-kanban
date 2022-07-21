@@ -1,16 +1,16 @@
-id,type,name,status,description,epic
-ce88a8d5-1cd7-4b23-af38-a304d63dab95,TASK,Task-1,NEW,New Task-1
-ac8ba206-79f4-4b4c-a064-671727afb37e,TASK,Task-2,NEW,New Task-2
-474bb220-5ed8-4f09-b01f-95e2d1d3c84c,EPIC,Epic-1,NEW,New Epic-1
-041c9d29-96b8-4e36-9154-c53f51da0174,EPIC,Epic-2,NEW,New Epic-2
-b386ec6d-67e9-4a92-af52-80234ae7cc86,SUBTASK,Subtask-1,NEW,New Subtask-1,474bb220-5ed8-4f09-b01f-95e2d1d3c84c
-a7261464-c210-45c4-8989-db63186a4e44,SUBTASK,Subtask-2,NEW,New Subtask-2,474bb220-5ed8-4f09-b01f-95e2d1d3c84c
-3846ed40-80a5-4c62-b574-ab58ae94e6f3,SUBTASK,Subtask-3,NEW,New Subtask-3,474bb220-5ed8-4f09-b01f-95e2d1d3c84c
+id,type,name,status,description,epic,startDate,duration
+252ff2e3-c976-4764-a358-7d3abe54515e,TASK,Task-1,NEW,New Task-1,,2022-07-21T23:10,600
+b641f7a3-0a46-4319-9e20-b7e9aad74c77,TASK,Task-2,NEW,New Task-2,,2022-07-21T23:12,600
+5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,EPIC,Epic-1,NEW,New Epic-1,,2022-07-21T23:13,1200
+5aa8917b-1a07-412c-83e9-bfc5e2a9c6b0,EPIC,Epic-2,NEW,New Epic-2,,null,0
+1d7031af-6d14-457e-9d1c-d56544097895,SUBTASK,Subtask-1,NEW,New Subtask-1,5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,2022-07-21T23:11,600
+00a0c39f-ef1b-4214-8531-072a31bffeaf,SUBTASK,Subtask-2,NEW,New Subtask-2,5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,2022-07-21T23:13,600
+73b28340-569d-4cf1-84ea-487f802aa37b,SUBTASK,Subtask-3,NEW,New Subtask-3,5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,null,0
 
-3846ed40-80a5-4c62-b574-ab58ae94e6f3,SUBTASK,Subtask-3,NEW,New Subtask-3,474bb220-5ed8-4f09-b01f-95e2d1d3c84c
-a7261464-c210-45c4-8989-db63186a4e44,SUBTASK,Subtask-2,NEW,New Subtask-2,474bb220-5ed8-4f09-b01f-95e2d1d3c84c
-b386ec6d-67e9-4a92-af52-80234ae7cc86,SUBTASK,Subtask-1,NEW,New Subtask-1,474bb220-5ed8-4f09-b01f-95e2d1d3c84c
-041c9d29-96b8-4e36-9154-c53f51da0174,EPIC,Epic-2,NEW,New Epic-2
-474bb220-5ed8-4f09-b01f-95e2d1d3c84c,EPIC,Epic-1,NEW,New Epic-1
-ac8ba206-79f4-4b4c-a064-671727afb37e,TASK,Task-2,NEW,New Task-2
-ce88a8d5-1cd7-4b23-af38-a304d63dab95,TASK,Task-1,NEW,New Task-1
+73b28340-569d-4cf1-84ea-487f802aa37b,SUBTASK,Subtask-3,NEW,New Subtask-3,5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,null,0
+00a0c39f-ef1b-4214-8531-072a31bffeaf,SUBTASK,Subtask-2,NEW,New Subtask-2,5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,2022-07-21T23:13,600
+1d7031af-6d14-457e-9d1c-d56544097895,SUBTASK,Subtask-1,NEW,New Subtask-1,5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,2022-07-21T23:11,600
+5aa8917b-1a07-412c-83e9-bfc5e2a9c6b0,EPIC,Epic-2,NEW,New Epic-2,,null,0
+5469ccd7-e5e2-4fcb-8dfc-6b88851b7a24,EPIC,Epic-1,NEW,New Epic-1,,2022-07-21T23:13,1200
+b641f7a3-0a46-4319-9e20-b7e9aad74c77,TASK,Task-2,NEW,New Task-2,,2022-07-21T23:12,600
+252ff2e3-c976-4764-a358-7d3abe54515e,TASK,Task-1,NEW,New Task-1,,2022-07-21T23:10,600
