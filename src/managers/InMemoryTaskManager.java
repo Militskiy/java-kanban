@@ -1,7 +1,9 @@
 package managers;
 
+import managers.exceptions.ValidationException;
 import managers.util.IdGenerator;
-import managers.util.TaskComparator;
+import tasks.util.TaskComparator;
+import tasks.util.TaskValidator;
 import tasks.*;
 import tasks.util.Status;
 
@@ -19,22 +21,35 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод добавления Subtask
     @Override
     public void addSubTask(Subtask subtask) {
-        subtask.setId(IdGenerator.generateID());
-        subtaskList.put(subtask.getId(), subtask);
-        epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
-        updateEpicStatus(subtask);
-        updateEpicDates(subtask);
-        updateSortedByStartDateList(subtask);
+        try {
+            TaskValidator.validateTask(subtask, dateSortedTaskList, "add");
+            subtask.setId(IdGenerator.generateID());
+            subtaskList.put(subtask.getId(), subtask);
+            epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
+            updateEpicStatus(subtask);
+            updateEpicDates(subtask);
+            updateSortedByStartDateList(subtask);
+        } catch (ValidationException e) {
+            System.out.println(e.getDetailedMessage());
+            System.exit(1);
+        }
     }
 
     // Метод обновления Subtask
     @Override
     public void updateSubtask(Subtask subtask) {
-        dateSortedTaskList.remove(subtaskList.get(subtask.getId()));
-        subtaskList.put(subtask.getId(), subtask);
-        updateEpicStatus(subtask);
-        updateEpicDates(subtask);
-        updateSortedByStartDateList(subtask);
+        try {
+            TaskValidator.validateTask(subtask, dateSortedTaskList, "update");
+            dateSortedTaskList.remove(subtaskList.get(subtask.getId()));
+            subtaskList.put(subtask.getId(), subtask);
+            updateEpicStatus(subtask);
+            updateEpicDates(subtask);
+            updateSortedByStartDateList(subtask);
+        } catch (ValidationException e) {
+            System.out.println(e.getDetailedMessage());
+            System.exit(1);
+        }
+
     }
 
     // Метод удаления Subtask
@@ -66,17 +81,29 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод добавления Task
     @Override
     public void addTask(Task task) {
-        task.setId(IdGenerator.generateID());
-        taskList.put(task.getId(), task);
-        updateSortedByStartDateList(task);
+        try {
+            TaskValidator.validateTask(task, dateSortedTaskList, "add");
+            task.setId(IdGenerator.generateID());
+            taskList.put(task.getId(), task);
+            updateSortedByStartDateList(task);
+        } catch (ValidationException e) {
+            System.out.println(e.getDetailedMessage());
+            System.exit(1);
+        }
     }
 
     // Метод обновления Task
     @Override
     public void updateTask(Task task) {
-        dateSortedTaskList.remove(taskList.get(task.getId()));
-        taskList.put(task.getId(), task);
-        updateSortedByStartDateList(task);
+        try {
+            TaskValidator.validateTask(task, dateSortedTaskList, "update");
+            dateSortedTaskList.remove(taskList.get(task.getId()));
+            taskList.put(task.getId(), task);
+            updateSortedByStartDateList(task);
+        } catch (ValidationException e) {
+            System.out.println(e.getDetailedMessage());
+            System.exit(1);
+        }
     }
 
     // Метод удаления Task

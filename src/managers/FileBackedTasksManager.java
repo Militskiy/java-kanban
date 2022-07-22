@@ -27,12 +27,12 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
         // Проверка, что после загрузки данных из файла, корректно работает добавление новых задач
         System.out.println("\n" + "Adding 1 Task, 1 Epic, 1 Subtask");
         Task task = new Task(null, TaskType.TASK, "New Task", "added after loading",
-                Status.NEW, LocalDateTime.of(2022, 7, 21, 23, 20), 600);
+                Status.NEW, LocalDateTime.of(2022, 7, 25, 23, 20), 600);
         taskManager.addTask(task);
         Epic epic = new Epic(null, TaskType.EPIC, "New Epic", "added after loading");
         taskManager.addEpic(epic);
         Subtask subtask = new Subtask(null, TaskType.SUBTASK, "New Subtask", "added after loading",
-                Status.NEW, epic, LocalDateTime.of(2022, 7, 21, 23, 21), 600);
+                Status.NEW, epic, LocalDateTime.of(2022, 7, 26, 23, 21), 600);
         taskManager.addSubTask(subtask);
 
         System.out.println(NEXT_LINE + "List every Task, Epic and Subtask");
