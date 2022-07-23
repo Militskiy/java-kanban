@@ -17,7 +17,7 @@ public final class StateSaver {
     private StateSaver() {
     }
 
-    public static void saveState(List<Task> list, List<Task> history) throws ManagerSaveException {
+    public static void saveState(List<Task> list, List<Task> history) {
         try (BufferedWriter writer = new BufferedWriter( new FileWriter(DEFAULT_FILE_PATH, StandardCharsets.UTF_8))) {
             writer.write("id,type,name,status,description,epic,startDate,duration" + NEXT_LINE);
             for (Task task : list) {

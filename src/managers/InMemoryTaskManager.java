@@ -12,17 +12,17 @@ import java.util.*;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    TaskComparator taskComparator = new TaskComparator();
+    private final TaskComparator taskComparator = new TaskComparator();
     protected final LinkedHashMap<String, Task> taskList = new LinkedHashMap<>();
     protected final LinkedHashMap<String, Epic> epicList = new LinkedHashMap<>();
     protected final LinkedHashMap<String, Subtask> subtaskList = new LinkedHashMap<>();
-    protected final Set<Task> dateSortedTaskList = new TreeSet<>(taskComparator);
+    protected final TreeSet<Task> dateSortedTaskList = new TreeSet<>(taskComparator);
 
     // Метод добавления Subtask
     @Override
     public void addSubTask(Subtask subtask) {
         try {
-            TaskValidator.validateTask(subtask, dateSortedTaskList, "add");
+            TaskValidator.validateTask(subtask, "add");
             subtask.setId(IdGenerator.generateID());
             subtaskList.put(subtask.getId(), subtask);
             epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
@@ -31,7 +31,6 @@ public class InMemoryTaskManager implements TaskManager {
             updateSortedByStartDateList(subtask);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
-            System.exit(1);
         }
     }
 
@@ -39,7 +38,7 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateSubtask(Subtask subtask) {
         try {
-            TaskValidator.validateTask(subtask, dateSortedTaskList, "update");
+            TaskValidator.validateTask(subtask, "update");
             dateSortedTaskList.remove(subtaskList.get(subtask.getId()));
             subtaskList.put(subtask.getId(), subtask);
             updateEpicStatus(subtask);
@@ -47,7 +46,6 @@ public class InMemoryTaskManager implements TaskManager {
             updateSortedByStartDateList(subtask);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
-            System.exit(1);
         }
 
     }
@@ -82,13 +80,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void addTask(Task task) {
         try {
-            TaskValidator.validateTask(task, dateSortedTaskList, "add");
+            TaskValidator.validateTask(task, "add");
             task.setId(IdGenerator.generateID());
             taskList.put(task.getId(), task);
             updateSortedByStartDateList(task);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
-            System.exit(1);
         }
     }
 
@@ -96,13 +93,12 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void updateTask(Task task) {
         try {
-            TaskValidator.validateTask(task, dateSortedTaskList, "update");
+            TaskValidator.validateTask(task, "update");
             dateSortedTaskList.remove(taskList.get(task.getId()));
             taskList.put(task.getId(), task);
             updateSortedByStartDateList(task);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
-            System.exit(1);
         }
     }
 
@@ -233,7 +229,7 @@ public class InMemoryTaskManager implements TaskManager {
         return list;
     }
     @Override
-    public Set<Task> listPrioritizedTasks() {
+    public TreeSet<Task> listPrioritizedTasks() {
         return dateSortedTaskList;
     }
 

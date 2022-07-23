@@ -1,5 +1,7 @@
 package managers.util;
 
+import managers.exceptions.LoadStateException;
+
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
@@ -18,9 +20,9 @@ public final class StateLoader {
 
     private static int cutoffIndex;
     private static String[] loadedData;
-    private static boolean isDataLoaded = false;
+    public static boolean isDataLoaded = false;
 
-    private static void loadState(Path file) throws NoSuchFileException {
+    private static void loadState(Path file) {
         try {
             loadedData = Files.readString(file, StandardCharsets.UTF_8).split(NEXT_LINE);
             for (int i = 0; i < loadedData.length; i++) {
@@ -29,10 +31,10 @@ public final class StateLoader {
                 }
             }
         } catch (IOException e) {
-            throw new NoSuchFileException(e.getMessage());
+            throw new LoadStateException(e.getMessage());
         }
     }
-    public static List<String[]> loadTaskState(Path file) throws NoSuchFileException {
+    public static List<String[]> loadTaskState(Path file) {
         if (!isDataLoaded) {
             loadState(file);
             isDataLoaded = true;
@@ -44,7 +46,7 @@ public final class StateLoader {
         result.remove(0);
         return result;
     }
-    public static List<String[]> loadHistoryState(Path file) throws NoSuchFileException {
+    public static List<String[]> loadHistoryState(Path file) {
         if (!isDataLoaded) {
             loadState(file);
             isDataLoaded = true;

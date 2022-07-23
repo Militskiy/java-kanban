@@ -1,13 +1,11 @@
 package managers;
 
-import managers.exceptions.ManagerSaveException;
 import managers.util.StateSaver;
 import managers.util.StateLoader;
 import tasks.*;
 import tasks.util.Status;
 import tasks.util.TaskType;
 
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDateTime;
@@ -19,7 +17,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     private static final Path FILE = Paths.get(DEFAULT_FILE_PATH);
 
-    public static void main(String[] args) throws NoSuchFileException {
+    public static void main(String[] args) {
         // Для генерации CSV запускать class Main
         System.out.println(NEXT_LINE + "Loading Data");
         FileBackedTasksManager taskManager = loadFromFile(FILE);
@@ -58,7 +56,7 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     // Метод загрузки из файла
-    public static FileBackedTasksManager loadFromFile(Path file) throws NoSuchFileException {
+    public static FileBackedTasksManager loadFromFile(Path file) {
         FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.getDefault();
         for (int i = 0; i < StateLoader.loadTaskState(file).size(); i++) {
             restoreTaskFromString(StateLoader.loadTaskState(file).get(i), fileBackedTasksManager);
@@ -217,11 +215,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Метод сохранения состояния в CSV
     private void save() {
-        try {
-            StateSaver.saveState(listEveryTaskAndEpicAndSubtask(), Managers.getDefaultHistory().getHistory());
-        } catch (ManagerSaveException e) {
-            e.printStackTrace();
-            System.exit(1);
-        }
+        StateSaver.saveState(listEveryTaskAndEpicAndSubtask(), Managers.getDefaultHistory().getHistory());
     }
 }
