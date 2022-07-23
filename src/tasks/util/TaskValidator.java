@@ -40,7 +40,6 @@ public final class TaskValidator {
                 }
             });
         }
-
     }
 
     public static void validateTask(Task task, String cause) throws ValidationException {
@@ -72,9 +71,9 @@ public final class TaskValidator {
     private static List<LocalDateTime> checkList(Task task) {
         LocalDateTime startTime = roundDown(task.getStartDate());
         List<LocalDateTime> result = new ArrayList<>(List.of(startTime));
-        int slotsNumber = (int) task.getDuration() % 15;
+        int slotsNumber = (int) task.getDuration() / 15;
         for (int i = 1; i < slotsNumber; i++) {
-            result.add(startTime.plusMinutes(15));
+            result.add(result.get(i - 1).plusMinutes(15));
         }
         return result;
     }
