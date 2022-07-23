@@ -31,7 +31,7 @@ public final class StateLoader {
                 }
             }
         } catch (IOException e) {
-            throw new LoadStateException(e.getMessage());
+            throw new LoadStateException(e.getMessage() + " file not found or not accessible");
         }
     }
     public static List<String[]> loadTaskState(Path file) {
