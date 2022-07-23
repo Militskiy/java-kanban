@@ -20,20 +20,18 @@ public final class TaskValidator {
         if (!StateLoader.isDataLoaded) {
             LocalDateTime beginDate = dateTime.truncatedTo(ChronoUnit.DAYS);
             LocalDateTime endDate = beginDate.plusYears(1);
-            while (!beginDate.isEqual(endDate)) {
-                validationMap.put(beginDate, false);
-                beginDate = beginDate.plusMinutes(15);
-            }
-            initialized = true;
+            fillValidationMap(beginDate, endDate);
         } else {
-            LocalDateTime beginDate = Managers.getDefault().listPrioritizedTasks().first().getStartDate()
-                    .truncatedTo(ChronoUnit.DAYS);
-            LocalDateTime endDate = beginDate.plusYears(1);
-            while (!beginDate.isEqual(endDate)) {
-                validationMap.put(beginDate, false);
-                beginDate = beginDate.plusMinutes(15);
+            LocalDateTime beginDate;
+            if (Managers.getDefault().listPrioritizedTasks().first().getStartDate()
+                    .truncatedTo(ChronoUnit.DAYS).isBefore(dateTime.truncatedTo(ChronoUnit.DAYS))) {
+                beginDate = Managers.getDefault().listPrioritizedTasks().first().getStartDate()
+                        .truncatedTo(ChronoUnit.DAYS);
+            } else {
+                beginDate = dateTime.truncatedTo(ChronoUnit.DAYS);
             }
-            initialized = true;
+            LocalDateTime endDate = beginDate.plusYears(1);
+            fillValidationMap(beginDate, endDate);
             Managers.getDefault().listPrioritizedTasks().forEach(task -> {
                 if (task.getStartDate() != null) {
                     checkList(task).forEach(timeSlot -> validationMap.put(timeSlot, true));
@@ -76,5 +74,12 @@ public final class TaskValidator {
             result.add(result.get(i - 1).plusMinutes(15));
         }
         return result;
+    }
+    private static void fillValidationMap(LocalDateTime beginDate, LocalDateTime endDate) {
+        while (!beginDate.isEqual(endDate)) {
+            validationMap.put(beginDate, false);
+            beginDate = beginDate.plusMinutes(15);
+        }
+        initialized = true;
     }
 }
