@@ -5,7 +5,6 @@ import managers.exceptions.LoadStateException;
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,15 +18,18 @@ public final class StateLoader {
     }
 
     private static int cutoffIndex;
-    private static String[] loadedData;
+    private static List<String> loadedData;
     public static boolean isDataLoaded = false;
 
     private static void loadState(Path file) {
         try {
-            loadedData = Files.readString(file, StandardCharsets.UTF_8).split(NEXT_LINE);
-            for (int i = 0; i < loadedData.length; i++) {
-                if (loadedData[i].isBlank()) {
+            loadedData = Files.readAllLines(file, StandardCharsets.UTF_8);
+            for (int i = 0; i < loadedData.size(); i++) {
+                if (loadedData.get(i).isBlank() || loadedData.get(i).equals(",,,,,,,")) {
                     cutoffIndex = i;
+                }
+                if (cutoffIndex == 0) {
+                    cutoffIndex = loadedData.size();
                 }
             }
         } catch (IOException e) {
@@ -41,7 +43,7 @@ public final class StateLoader {
         }
         List<String[]> result = new ArrayList<>();
         for (int i = 0; i < cutoffIndex; i++) {
-            result.add(loadedData[i].split(DELIMITER));
+            result.add(loadedData.get(i).split(DELIMITER));
         }
         result.remove(0);
         return result;
@@ -52,8 +54,8 @@ public final class StateLoader {
             isDataLoaded = true;
         }
         List<String[]> result = new ArrayList<>();
-        for (int i = cutoffIndex + 1; i < loadedData.length; i++) {
-            result.add(loadedData[i].split(DELIMITER));
+        for (int i = cutoffIndex + 1; i < loadedData.size(); i++) {
+            result.add(loadedData.get(i).split(DELIMITER));
         }
         return result;
     }

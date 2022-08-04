@@ -30,24 +30,6 @@ public class CustomLinkedList<T extends Task> {
         }
     }
 
-    // Метод добавления элемента в конец списка
-    public void linkLast(T element) {
-        final Node<T> oldLast = last;
-        final Node<T> newNode = new Node<>(oldLast, element, null);
-        last = newNode;
-        if (oldLast == null) {
-            first = newNode;
-        } else {
-            oldLast.next = newNode;
-        }
-        if (nodeMap.get(element.getId()) == null) {
-            nodeMap.put(element.getId(), newNode);
-        } else {
-            removeTask(element.getId());
-            nodeMap.put(element.getId(), newNode);
-        }
-    }
-
     // Метод получения списка задач в истории
     public ArrayList<T> getTasks() {
         ArrayList<T> result = new ArrayList<>();
@@ -59,22 +41,24 @@ public class CustomLinkedList<T extends Task> {
 
     // Метод удаления ноды из списка
     public void removeTask(String id) {
-        final Node<T> node = nodeMap.get(id);
-        final Node<T> next = node.next;
-        final Node<T> prev = node.prev;
-        if (prev == null) {
-            first = next;
-        } else {
-            prev.next = next;
-            node.prev = null;
+        if (nodeMap.get(id) != null) {
+            final Node<T> node = nodeMap.get(id);
+            final Node<T> next = node.next;
+            final Node<T> prev = node.prev;
+            if (prev == null) {
+                first = next;
+            } else {
+                prev.next = next;
+                node.prev = null;
+            }
+            if (next == null) {
+                last = prev;
+            } else {
+                next.prev = prev;
+                node.next = null;
+            }
+            node.data = null;
         }
-        if (next == null) {
-            last = prev;
-        } else {
-            next.prev = prev;
-            node.next = null;
-        }
-        node.data = null;
     }
 
     private static class Node<E extends Task> {

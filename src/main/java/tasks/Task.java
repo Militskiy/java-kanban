@@ -4,9 +4,6 @@ import tasks.util.Status;
 import tasks.util.TaskType;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.Calendar;
-import java.util.Date;
 
 public class Task {
 
@@ -27,25 +24,23 @@ public class Task {
         this.startDate = startDate;
         this.duration = duration;
     }
-    public Task(String id, TaskType type, String name, String description, LocalDateTime startDate, long duration) {
-        this.id = id;
-        this.type = type;
-        this.name = name;
-        this.description = description;
-        this.startDate = startDate;
-        this.duration = duration;
-    }
-
-    public Task(String id, TaskType type, String name, String description, Status status) {
-        this.id = id;
+    public Task(TaskType type, String name, String description, Status status, LocalDateTime startDate, long duration) {
         this.type = type;
         this.name = name;
         this.description = description;
         this.status = status;
+        this.startDate = startDate;
+        this.duration = duration;
     }
 
     public Task(String id, TaskType type, String name, String description) {
         this.id = id;
+        this.type = type;
+        this.name = name;
+        this.description = description;
+    }
+
+    public Task(TaskType type, String name, String description) {
         this.type = type;
         this.name = name;
         this.description = description;

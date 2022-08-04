@@ -11,7 +11,6 @@ public class ValidationException extends Exception {
         this.cause = cause;
     }
 
-
     public String getDetailedMessage() {
         return "Cannot " + cause + " " + task.getType().toString().charAt(0) +
                 task.getType().toString().toLowerCase().substring(1) + ": " +

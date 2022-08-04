@@ -17,8 +17,8 @@ public final class StateSaver {
     private StateSaver() {
     }
 
-    public static void saveState(List<Task> list, List<Task> history) {
-        try (BufferedWriter writer = new BufferedWriter( new FileWriter(DEFAULT_FILE_PATH, StandardCharsets.UTF_8))) {
+    public static void saveState(List<Task> list, List<Task> history, String path) {
+        try (BufferedWriter writer = new BufferedWriter( new FileWriter(path, StandardCharsets.UTF_8))) {
             writer.write("id,type,name,status,description,epic,startDate,duration" + NEXT_LINE);
             for (Task task : list) {
                 writer.write(Converter.convertTaskToCSV(task) + NEXT_LINE);

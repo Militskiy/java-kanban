@@ -4,12 +4,11 @@ import tasks.*;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Set;
 import java.util.TreeSet;
 
 public interface TaskManager {
     // Метод добавления tasks.Subtask
-    void addSubTask(Subtask subtask);
+    String addSubTask(Subtask subtask);
 
     // Метод обновления tasks.Subtask
     void updateSubtask(Subtask subtask);
@@ -21,7 +20,7 @@ public interface TaskManager {
     void deleteAllSubTasks();
 
     // Метод добавления tasks.Task
-    void addTask(Task task);
+    String addTask(Task task);
 
     // Метод обновления tasks.Task
     void updateTask(Task task);
@@ -32,7 +31,7 @@ public interface TaskManager {
     void deleteAllTasks();
 
     // Метод добавления tasks.Epic
-    void addEpic(Epic epic);
+    String addEpic(Epic epic);
 
     // Метод обновления tasks.Epic
     void updateEpic(Epic epic);
@@ -67,4 +66,5 @@ public interface TaskManager {
     // Метод вывода сразу всех задач, эпиков и подзадач
     List<Task> listEveryTaskAndEpicAndSubtask();
     TreeSet<Task> listPrioritizedTasks();
+    <T extends Task> void updateSortedByStartDateList (T task);
 }

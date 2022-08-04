@@ -3,7 +3,6 @@ package tasks.util;
 import tasks.Task;
 
 import java.util.Comparator;
-import java.util.UUID;
 
 public class TaskComparator implements Comparator<Task> {
     @Override
@@ -15,7 +14,7 @@ public class TaskComparator implements Comparator<Task> {
             return -1;
         }
         if (o1.getStartDate().equals(o2.getStartDate())) {
-            return 1;
+            return 0;
         }
         return o1.getStartDate().compareTo(o2.getStartDate());
     }

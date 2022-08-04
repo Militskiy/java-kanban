@@ -7,57 +7,17 @@ import tasks.util.Status;
 import tasks.util.TaskType;
 
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.time.LocalDateTime;
 
+import static managers.util.Constants.DEFAULT_FILE_PATH;
 import static tasks.util.TaskType.*;
-import static managers.util.Constants.*;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
-
-    private static final Path FILE = Paths.get(DEFAULT_FILE_PATH);
-
-    public static void main(String[] args) {
-        // Для генерации CSV запускать class Main
-        System.out.println(NEXT_LINE + "Loading Data");
-        FileBackedTasksManager taskManager = loadFromFile(FILE);
-
-        // Проверка, что после загрузки данных из файла, корректно работает добавление новых задач
-        System.out.println("\n" + "Adding 1 Task, 1 Epic, 1 Subtask");
-        Task task = new Task(null, TaskType.TASK, "New Task", "added after loading",
-                Status.NEW, LocalDateTime.of(2022, 7, 25, 23, 20), 600);
-        taskManager.addTask(task);
-        Epic epic = new Epic(null, TaskType.EPIC, "New Epic", "added after loading");
-        taskManager.addEpic(epic);
-        Subtask subtask = new Subtask(null, TaskType.SUBTASK, "New Subtask", "added after loading",
-                Status.NEW, epic, LocalDateTime.of(2022, 7, 26, 23, 21), 600);
-        taskManager.addSubTask(subtask);
-
-        System.out.println(NEXT_LINE + "List every Task, Epic and Subtask");
-        taskManager.listEveryTaskAndEpicAndSubtask().forEach(System.out::println);
-
-        System.out.println(NEXT_LINE + "Showing loaded history");
-        Managers.getDefaultHistory().getHistory().forEach(System.out::println);
-
-        System.out.println(NEXT_LINE + "Showing loaded history + newly added and requested tasks");
-        taskManager.getTaskById(task.getId());
-        taskManager.getEpicById(epic.getId());
-        taskManager.getSubtaskById(subtask.getId());
-        Managers.getDefaultHistory().getHistory().forEach(System.out::println);
-
-        System.out.println(NEXT_LINE + "Testing Epics subtask list");
-        taskManager.listEpics().forEach((k, v) -> {
-            System.out.println(v.getType() + " ID: " + v.getId());
-            v.getSubtaskList().forEach((value) -> System.out.println(value.getType() + " " + value));
-            System.out.println();
-        });
-        System.out.println("\n" + "Sorted List");
-        taskManager.listPrioritizedTasks().forEach(System.out::println);
-    }
+    // main убил тк тестирование теперь идет в Тестах.
 
     // Метод загрузки из файла
     public static FileBackedTasksManager loadFromFile(Path file) {
-        FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.getDefault();
+        final FileBackedTasksManager fileBackedTasksManager = (FileBackedTasksManager) Managers.getDefault();
         for (int i = 0; i < StateLoader.loadTaskState(file).size(); i++) {
             restoreTaskFromString(StateLoader.loadTaskState(file).get(i), fileBackedTasksManager);
         }
@@ -68,9 +28,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addSubTask(Subtask subtask) {
-        super.addSubTask(subtask);
+    public String addSubTask(Subtask subtask) {
+        String id = super.addSubTask(subtask);
         save();
+        return id;
     }
 
     @Override
@@ -92,9 +53,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addTask(Task task) {
-        super.addTask(task);
+    public String addTask(Task task) {
+        String id = super.addTask(task);
         save();
+        return id;
     }
 
     @Override
@@ -116,9 +78,10 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     }
 
     @Override
-    public void addEpic(Epic epic) {
-        super.addEpic(epic);
+    public String addEpic(Epic epic) {
+        String id = super.addEpic(epic);
         save();
+        return id;
     }
 
     @Override
@@ -164,21 +127,42 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
     private static void restoreTaskFromString(String[] stringArray, FileBackedTasksManager fileBackedTasksManager) {
         switch (TaskType.valueOf(stringArray[1])) {
             case TASK:
-                Task task = new Task(stringArray[0], TASK, stringArray[2], stringArray[4], Status.valueOf(stringArray[3]), returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7]));
+                Task task = new Task(stringArray[0],
+                        TASK,
+                        stringArray[2],
+                        stringArray[4],
+                        Status.valueOf(stringArray[3]),
+                        returnDateOrNull(stringArray[6]),
+                        Long.parseLong(stringArray[7]));
+
                 fileBackedTasksManager.taskList.put(stringArray[0], task);
                 fileBackedTasksManager.updateSortedByStartDateList(task);
                 break;
             case EPIC:
-                Epic epic = new Epic(stringArray[0], EPIC, stringArray[2], stringArray[4], Status.valueOf(stringArray[3]),
-                        returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7]),
+                Epic epic = new Epic(stringArray[0],
+                        EPIC,
+                        stringArray[2],
+                        stringArray[4],
+                        Status.valueOf(stringArray[3]),
+                        returnDateOrNull(stringArray[6]),
+                        Long.parseLong(stringArray[7]),
                         calculateEndDate(returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7])));
+
                 fileBackedTasksManager.epicList.put(stringArray[0], epic);
                 break;
             case SUBTASK:
-                Subtask subtask = new Subtask(stringArray[0], SUBTASK, stringArray[2], stringArray[4],
-                        Status.valueOf(stringArray[3]), fileBackedTasksManager.epicList.get(stringArray[5]), returnDateOrNull(stringArray[6]), Long.parseLong(stringArray[7]));
+                Subtask subtask = new Subtask(stringArray[0],
+                        SUBTASK,
+                        stringArray[2],
+                        stringArray[4],
+                        Status.valueOf(stringArray[3]),
+                        fileBackedTasksManager.epicList.get(stringArray[5]),
+                        returnDateOrNull(stringArray[6]),
+                        Long.parseLong(stringArray[7]));
+
                 fileBackedTasksManager.subtaskList.put(subtask.getId(), subtask);
                 fileBackedTasksManager.epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
+                fileBackedTasksManager.updateEpicDates(subtask);
                 fileBackedTasksManager.updateSortedByStartDateList(subtask);
                 break;
         }
@@ -215,6 +199,6 @@ public class FileBackedTasksManager extends InMemoryTaskManager {
 
     // Метод сохранения состояния в CSV
     private void save() {
-        StateSaver.saveState(listEveryTaskAndEpicAndSubtask(), Managers.getDefaultHistory().getHistory());
+        StateSaver.saveState(listEveryTaskAndEpicAndSubtask(), this.historyManager.getHistory(), DEFAULT_FILE_PATH);
     }
 }

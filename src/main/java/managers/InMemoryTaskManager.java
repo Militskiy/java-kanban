@@ -1,5 +1,6 @@
 package managers;
 
+import managers.exceptions.NoSuchEpicException;
 import managers.exceptions.ValidationException;
 import managers.util.IdGenerator;
 import tasks.util.TaskComparator;
@@ -12,17 +13,24 @@ import java.util.*;
 
 
 public class InMemoryTaskManager implements TaskManager {
-    private final TaskComparator taskComparator = new TaskComparator();
+    protected final HistoryManager historyManager = Managers.getDefaultHistory();
+    protected final TaskValidator taskValidator = new TaskValidator(this);
     protected final LinkedHashMap<String, Task> taskList = new LinkedHashMap<>();
     protected final LinkedHashMap<String, Epic> epicList = new LinkedHashMap<>();
     protected final LinkedHashMap<String, Subtask> subtaskList = new LinkedHashMap<>();
-    protected final TreeSet<Task> dateSortedTaskList = new TreeSet<>(taskComparator);
+    protected final TreeSet<Task> dateSortedTaskList = new TreeSet<>(new TaskComparator());
 
     // Метод добавления Subtask
     @Override
-    public void addSubTask(Subtask subtask) {
+    public String addSubTask(Subtask subtask) {
         try {
-            TaskValidator.validateTask(subtask, "add");
+            if (epicList.get(subtask.getEpic().getId()) == null) {
+                throw new NoSuchEpicException(subtask.getEpic().getName());
+            }
+            if (subtask.getStatus() == null) {
+                subtask.setStatus(Status.NEW);
+            }
+            taskValidator.validateNewTask(subtask, "add");
             subtask.setId(IdGenerator.generateID());
             subtaskList.put(subtask.getId(), subtask);
             epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
@@ -31,16 +39,22 @@ public class InMemoryTaskManager implements TaskManager {
             updateSortedByStartDateList(subtask);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
+        } catch (NoSuchEpicException e) {
+            System.out.println(e.getDetailedMessage());
         }
+        return subtask.getId();
     }
 
     // Метод обновления Subtask
     @Override
     public void updateSubtask(Subtask subtask) {
         try {
-            TaskValidator.validateTask(subtask, "update");
+            LocalDateTime oldStartDate = subtaskList.get(subtask.getId()).getStartDate();
+            long oldDuration = subtaskList.get(subtask.getId()).getDuration();
+            taskValidator.validateUpdatedTask(subtask, oldStartDate, oldDuration, "update");
             dateSortedTaskList.remove(subtaskList.get(subtask.getId()));
             subtaskList.put(subtask.getId(), subtask);
+            epicList.get(subtask.getEpic().getId()).updateSubtask(subtask);
             updateEpicStatus(subtask);
             updateEpicDates(subtask);
             updateSortedByStartDateList(subtask);
@@ -57,16 +71,16 @@ public class InMemoryTaskManager implements TaskManager {
             epicList.get(subtaskList.get(subtaskID).getEpic().getId()).getSubtaskList().remove(subtaskList.get(subtaskID));
             updateEpicStatus(subtaskList.get(subtaskID));
             updateEpicDates(subtaskList.get(subtaskID));
-            subtaskList.remove(subtaskID);
-            Managers.getDefaultHistory().remove(List.of(subtaskID));
             dateSortedTaskList.remove(subtaskList.get(subtaskID));
+            subtaskList.remove(subtaskID);
+            historyManager.remove(List.of(subtaskID));
         }
     }
 
     // Метод удаления всех Subtask
     @Override
     public void deleteAllSubTasks() {
-        Managers.getDefaultHistory().remove(new ArrayList<>(subtaskList.keySet()));
+        historyManager.remove(new ArrayList<>(subtaskList.keySet()));
         subtaskList.forEach((id, subtask) -> dateSortedTaskList.remove(subtask));
         subtaskList.clear();
         epicList.forEach((id, epic) -> {
@@ -78,22 +92,28 @@ public class InMemoryTaskManager implements TaskManager {
 
     // Метод добавления Task
     @Override
-    public void addTask(Task task) {
+    public String addTask(Task task) {
         try {
-            TaskValidator.validateTask(task, "add");
+            if (task.getStatus() == null) {
+                task.setStatus(Status.NEW);
+            }
+            taskValidator.validateNewTask(task, "add");
             task.setId(IdGenerator.generateID());
             taskList.put(task.getId(), task);
             updateSortedByStartDateList(task);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
         }
+        return task.getId();
     }
 
     // Метод обновления Task
     @Override
     public void updateTask(Task task) {
         try {
-            TaskValidator.validateTask(task, "update");
+            LocalDateTime oldStartDate = taskList.get(task.getId()).getStartDate();
+            long oldDuration = taskList.get(task.getId()).getDuration();
+            taskValidator.validateUpdatedTask(task, oldStartDate, oldDuration, "update");
             dateSortedTaskList.remove(taskList.get(task.getId()));
             taskList.put(task.getId(), task);
             updateSortedByStartDateList(task);
@@ -106,25 +126,28 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteTask(String taskID) {
         if (taskList.containsKey(taskID)) {
+            Task task = taskList.get(taskID);
+            dateSortedTaskList.remove(task);
             taskList.remove(taskID);
-            Managers.getDefaultHistory().remove(List.of(taskID));
-            dateSortedTaskList.remove(taskList.get(taskID));
+            historyManager.remove(List.of(taskID));
+            taskValidator.removeTaskFromValidationMap(task);
         }
     }
 
     @Override
     public void deleteAllTasks() {
-        Managers.getDefaultHistory().remove(new ArrayList<>(taskList.keySet()));
+        historyManager.remove(new ArrayList<>(taskList.keySet()));
         taskList.forEach((id, task) -> dateSortedTaskList.remove(task));
         taskList.clear();
     }
 
     // Метод добавления Epic
     @Override
-    public void addEpic(Epic epic) {
+    public String addEpic(Epic epic) {
         epic.setId(IdGenerator.generateID());
         epic.setStatus(Status.NEW);
         epicList.put(epic.getId(), epic);
+        return epic.getId();
     }
 
     // Метод обновления Epic
@@ -143,7 +166,7 @@ public class InMemoryTaskManager implements TaskManager {
                 ids.add(subtask.getId());
                 subtaskList.remove(subtask.getId());
             });
-            Managers.getDefaultHistory().remove(ids);
+            historyManager.remove(ids);
             epicList.remove(id);
         }
     }
@@ -152,9 +175,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllEpics() {
         epicList.forEach((id, epic) -> epic.getSubtaskList().forEach(dateSortedTaskList::remove));
-        Managers.getDefaultHistory().remove(new ArrayList<>(subtaskList.keySet()));
+        historyManager.remove(new ArrayList<>(subtaskList.keySet()));
         subtaskList.clear();
-        Managers.getDefaultHistory().remove(new ArrayList<>(epicList.keySet()));
+        historyManager.remove(new ArrayList<>(epicList.keySet()));
         epicList.clear();
     }
 
@@ -169,7 +192,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Task getTaskById(String id) {
         if (taskList.containsKey(id)) {
             Task task = taskList.get(id);
-            Managers.getDefaultHistory().add(task);
+            historyManager.add(task);
             return task;
         }
         return null;
@@ -186,7 +209,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Epic getEpicById(String id) {
         if (epicList.containsKey(id)) {
             Epic epic = epicList.get(id);
-            Managers.getDefaultHistory().add(epic);
+            historyManager.add(epic);
             return epic;
         }
         return null;
@@ -203,7 +226,7 @@ public class InMemoryTaskManager implements TaskManager {
     public Subtask getSubtaskById(String id) {
         if (subtaskList.containsKey(id)) {
             Subtask subtask = subtaskList.get(id);
-            Managers.getDefaultHistory().add(subtask);
+            historyManager.add(subtask);
             return subtask;
         }
         return null;
@@ -228,9 +251,15 @@ public class InMemoryTaskManager implements TaskManager {
         list.addAll(subtaskList.values());
         return list;
     }
+
     @Override
     public TreeSet<Task> listPrioritizedTasks() {
         return dateSortedTaskList;
+    }
+
+    @Override
+    public <T extends Task> void updateSortedByStartDateList(T task) {
+        dateSortedTaskList.add(task);
     }
 
     // Метод расчета статуса Epic в зависимости от статусов его Subtask
@@ -250,13 +279,14 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // Метод обновления endDate Epic
-    private void updateEpicDates(Subtask subtask) {
+    protected void updateEpicDates(Subtask subtask) {
         Epic epic = epicList.get(subtask.getEpic().getId());
         LocalDateTime minDate = LocalDateTime.of(1900, 1, 1, 0, 0);
         LocalDateTime maxDate = LocalDateTime.of(1900, 1, 1, 0, 0);
         long epicDuration = 0;
         for (Subtask subtask1 : epic.getSubtaskList()) {
             if (subtask1.getStartDate() != null) {
+                assert minDate != null;
                 if (minDate.isBefore(subtask1.getStartDate())) {
                     minDate = subtask1.getStartDate();
                 }
@@ -264,14 +294,15 @@ public class InMemoryTaskManager implements TaskManager {
                     maxDate = subtask1.getStartDate().plusMinutes(subtask1.getDuration());
                 }
                 epicDuration = epicDuration + subtask1.getDuration();
+            } else {
+                minDate = null;
+                maxDate = null;
+                epicDuration = 0;
             }
         }
         epic.setStartDate(minDate);
         epic.setDuration(epicDuration);
         epic.setEndDate(maxDate);
         epicList.put(epic.getId(), epic);
-    }
-    protected <T extends Task> void updateSortedByStartDateList (T task) {
-        dateSortedTaskList.add(task);
     }
 }

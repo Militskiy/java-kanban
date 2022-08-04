@@ -4,7 +4,6 @@ import tasks.util.Status;
 import tasks.util.TaskType;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,33 +20,37 @@ public class Epic extends Task {
         subtaskList.add(subtask);
     }
 
-    public Epic(String id, TaskType type, String name, String description, Status status, LocalDateTime startDate, long duration, LocalDateTime endDate) {
+    public void updateSubtask(Subtask subtask) {
+        for (int i = 0; i < subtaskList.size(); i++) {
+            if (subtaskList.get(i).getId().equals(subtask.getId())) {
+                subtaskList.set(i, subtask);
+            }
+        }
+    }
+
+    public Epic(String id, TaskType type, String name, String description, Status status, LocalDateTime startDate,
+                long duration, LocalDateTime endDate) {
         super(id, type, name, description, status, startDate, duration);
         this.endDate = endDate;
     }
 
-    public Epic(String id, TaskType type, String name, String description, LocalDateTime startDate, long duration, LocalDateTime endDate) {
-        super(id, type, name, description, startDate, duration);
-        this.endDate = endDate;
-    }
 
-    public Epic(String id, TaskType type, String name, String description, LocalDateTime startDate, long duration) {
-        super(id, type, name, description, startDate, duration);
-    }
-
-    public Epic(String id, TaskType type, String name, String description, Status status) {
-        super(id, type, name, description, status);
+    public Epic(TaskType type, String name, String description) {
+        super(type, name, description);
     }
 
     public LocalDateTime getEndDate() {
         return endDate;
     }
+
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
     }
+
     public void clearSubTaskList() {
         subtaskList.clear();
     }
+
     public List<Subtask> getSubtaskList() {
         return subtaskList;
     }

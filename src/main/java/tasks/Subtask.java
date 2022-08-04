@@ -4,7 +4,6 @@ import tasks.util.Status;
 import tasks.util.TaskType;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
 public class Subtask extends Task {
 
@@ -19,6 +18,15 @@ public class Subtask extends Task {
         this.epic = epic;
     }
 
+    public Subtask(TaskType type, String name, String description, Status status, LocalDateTime startDate, long duration, Epic epic) {
+        super(type, name, description, status, startDate, duration);
+        this.epic = epic;
+    }
+
+    public Subtask(TaskType type, String name, String description, Epic epic) {
+        super(type, name, description);
+        this.epic = epic;
+    }
 
     @Override
     public String toString() {
