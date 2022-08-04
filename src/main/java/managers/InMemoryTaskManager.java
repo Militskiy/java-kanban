@@ -25,7 +25,7 @@ public class InMemoryTaskManager implements TaskManager {
     public String addSubTask(Subtask subtask) {
         try {
             if (epicList.get(subtask.getEpic().getId()) == null) {
-                throw new NoSuchEpicException(subtask.getEpic().getName());
+                throw new NoSuchEpicException("No such epic exists.");
             }
             if (subtask.getStatus() == null) {
                 subtask.setStatus(Status.NEW);
@@ -38,8 +38,6 @@ public class InMemoryTaskManager implements TaskManager {
             updateEpicDates(subtask);
             updateSortedByStartDateList(subtask);
         } catch (ValidationException e) {
-            System.out.println(e.getDetailedMessage());
-        } catch (NoSuchEpicException e) {
             System.out.println(e.getDetailedMessage());
         }
         return subtask.getId();

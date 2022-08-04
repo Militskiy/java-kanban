@@ -1,7 +1,6 @@
 package managers;
 
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
+import managers.exceptions.NoSuchEpicException;
 import org.junit.jupiter.api.Test;
 import tasks.*;
 import tasks.util.TaskComparator;
@@ -28,17 +27,8 @@ abstract class TaskManagerTest<T extends TaskManager> {
     final static LocalDateTime DAY_3 = LocalDateTime.of(2022, 1, 3, 0, 0);
     final static LocalDateTime DAY_4 = LocalDateTime.of(2022, 1, 4, 0, 0);
 
-    @BeforeAll
-    static void beforeAll() {
-    }
-
-    @BeforeEach
-    void beforeEach() {
-    }
-
     @Test
     void addsSubTask() {
-        assertNull(taskManager.addSubTask(subtask1), "Добавляется задача с несуществующим эпиком");
         final String epicID = taskManager.addEpic(epic);
         final String subtaskID = taskManager.addSubTask(subtask2);
         final Epic savedEpic = taskManager.getEpicById(epicID);
@@ -55,6 +45,12 @@ abstract class TaskManagerTest<T extends TaskManager> {
         assertNotNull(subtasks, "Задачи не возвращаются.");
         assertEquals(1, subtasks.size(), "Неверное количество задач.");
         assertEquals(subtask2, subtasks.get(subtaskID), "Задачи не совпадают");
+    }
+
+    @Test
+    void throwsNoSuchEpicException() {
+        NoSuchEpicException ex = assertThrows(NoSuchEpicException.class, () -> taskManager.addSubTask(subtask1));
+        assertEquals("No such epic exists.", ex.getMessage());
     }
 
     @Test

@@ -5,7 +5,6 @@ import managers.exceptions.ManagerSaveException;
 import managers.util.StateLoader;
 import managers.util.StateSaver;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import tasks.Epic;
@@ -22,11 +21,6 @@ import static tasks.util.TaskType.*;
 import static tasks.util.TaskType.SUBTASK;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
-
-    @BeforeAll
-    static void beforeAll() {
-
-    }
 
     @BeforeEach
     void beforeEach() {

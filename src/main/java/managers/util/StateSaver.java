@@ -31,7 +31,7 @@ public final class StateSaver {
                 }
             }
         } catch (IOException e) {
-            throw new ManagerSaveException(e.getMessage());
+            throw new ManagerSaveException(path + " (The system cannot find the path specified)");
         }
     }
 }

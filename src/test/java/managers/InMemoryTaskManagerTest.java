@@ -7,6 +7,7 @@ import tasks.*;
 import tasks.util.Status;
 
 import java.time.Duration;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -30,12 +31,11 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
                 IN_PROGRESS, DAY_4, 1440, epic);
     }
 
-
     @Test
     void validatesNewTask() {
         final String taskId = taskManager.addTask(task);
         final Task savedTask = taskManager.getTaskById(taskId);
-        for (Object o : taskManager.taskValidator.newCheckList(savedTask)) {
+        for (LocalDateTime o : taskManager.taskValidator.newCheckList(savedTask)) {
             assertEquals(true, taskManager.taskValidator.getValidationMap().get(o),
                     "Не корректно заполнилась карта валидации");
         }
@@ -53,7 +53,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
                 Duration.ofDays(2).toMinutes());
 
         taskManager.updateTask(updatedTask);
-        for (Object o : taskManager.taskValidator.newCheckList(updatedTask)) {
+        for (LocalDateTime o : taskManager.taskValidator.newCheckList(updatedTask)) {
             assertEquals(true, taskManager.taskValidator.getValidationMap().get(o),
                     "Не корректно заполнилась карта валидации");
         }
@@ -67,7 +67,7 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         assertNull(deletedTask, "Задаче не удалена.");
         final Map<String, Task> tasks = taskManager.listTasks();
         assertEquals(0, tasks.size(), "Задачи не удалились из списка");
-        for (Object o : taskManager.taskValidator.newCheckList(task)) {
+        for (LocalDateTime o : taskManager.taskValidator.newCheckList(task)) {
             assertEquals(false, taskManager.taskValidator.getValidationMap().get(o),
                     "Не очистилась карта валидации");
         }
