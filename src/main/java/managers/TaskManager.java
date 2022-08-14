@@ -67,4 +67,6 @@ public interface TaskManager {
     List<Task> listEveryTaskAndEpicAndSubtask();
     TreeSet<Task> listPrioritizedTasks();
     <T extends Task> void updateSortedByStartDateList (T task);
+    List<Task> getHistory();
+    boolean isDataLoaded();
 }

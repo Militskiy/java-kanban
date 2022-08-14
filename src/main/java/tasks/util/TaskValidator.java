@@ -2,7 +2,6 @@ package tasks.util;
 
 import managers.TaskManager;
 import managers.exceptions.ValidationException;
-import managers.util.StateLoader;
 import tasks.Task;
 
 import java.time.LocalDateTime;
@@ -26,13 +25,15 @@ public class TaskValidator {
     private void init(LocalDateTime date) {
         // Логика если не идет загрузка данных из файла
         LocalDateTime beginDate;
-        if (!StateLoader.isDataLoaded) {
+        if (!taskManager.isDataLoaded()) {
             beginDate = date.truncatedTo(ChronoUnit.DAYS);
             endDate = beginDate.plusMonths(1);
             fillValidationMap(beginDate, endDate);
             // Логика если идет загрузка из файла
         } else {
-            if (taskManager.listPrioritizedTasks().first().getStartDate()
+            if (taskManager.listPrioritizedTasks().isEmpty()) {
+                beginDate = date.truncatedTo(ChronoUnit.DAYS);
+            } else if (taskManager.listPrioritizedTasks().first().getStartDate()
                     .truncatedTo(ChronoUnit.DAYS).isBefore(date.truncatedTo(ChronoUnit.DAYS))) {
                 beginDate = taskManager.listPrioritizedTasks().first().getStartDate()
                         .truncatedTo(ChronoUnit.DAYS);
@@ -54,7 +55,7 @@ public class TaskValidator {
     }
 
     public void validateNewTask(Task task, String cause) throws ValidationException {
-        if (!initialized && !(task.getStartDate() == null)) {
+        if (!initialized && task.getStartDate() != null) {
             init(task.getStartDate());
         }
         if (task.getStartDate() != null) {

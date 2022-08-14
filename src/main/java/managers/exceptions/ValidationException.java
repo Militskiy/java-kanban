@@ -2,7 +2,7 @@ package managers.exceptions;
 
 import tasks.Task;
 
-public class ValidationException extends Exception {
+public class ValidationException extends RuntimeException {
     private final Task task;
     private final String cause;
 

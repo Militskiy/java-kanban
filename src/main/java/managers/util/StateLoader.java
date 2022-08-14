@@ -11,7 +11,7 @@ import java.util.List;
 
 import static managers.util.Constants.*;
 
- // Утилитарный класс для загрузки данных из CSV
+// Утилитарный класс для загрузки данных из CSV
 public final class StateLoader {
 
     private StateLoader() {
@@ -19,7 +19,6 @@ public final class StateLoader {
 
     private static int cutoffIndex;
     private static List<String> loadedData;
-    public static boolean isDataLoaded = false;
 
     private static void loadState(Path file) {
         try {
@@ -36,11 +35,9 @@ public final class StateLoader {
             throw new LoadStateException(e.getMessage() + " file not found or not accessible");
         }
     }
+
     public static List<String[]> loadTaskState(Path file) {
-        if (!isDataLoaded) {
-            loadState(file);
-            isDataLoaded = true;
-        }
+        loadState(file);
         List<String[]> result = new ArrayList<>();
         for (int i = 0; i < cutoffIndex; i++) {
             result.add(loadedData.get(i).split(DELIMITER));
@@ -48,11 +45,8 @@ public final class StateLoader {
         result.remove(0);
         return result;
     }
+
     public static List<String[]> loadHistoryState(Path file) {
-        if (!isDataLoaded) {
-            loadState(file);
-            isDataLoaded = true;
-        }
         List<String[]> result = new ArrayList<>();
         for (int i = cutoffIndex + 1; i < loadedData.size(); i++) {
             result.add(loadedData.get(i).split(DELIMITER));

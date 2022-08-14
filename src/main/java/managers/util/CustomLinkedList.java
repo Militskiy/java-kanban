@@ -30,6 +30,26 @@ public class CustomLinkedList<T extends Task> {
         }
     }
 
+    // Метод добавления элемента в конец списка
+
+    public void linkLast(T element) {
+
+        final Node<T> oldLast = last;
+        final Node<T> newNode = new Node<>(oldLast, element, null);
+        last = newNode;
+        if (oldLast == null) {
+            first = newNode;
+        } else {
+            oldLast.next = newNode;
+        }
+        if (nodeMap.get(element.getId()) == null) {
+            nodeMap.put(element.getId(), newNode);
+        } else {
+            removeTask(element.getId());
+            nodeMap.put(element.getId(), newNode);
+        }
+    }
+
     // Метод получения списка задач в истории
     public ArrayList<T> getTasks() {
         ArrayList<T> result = new ArrayList<>();

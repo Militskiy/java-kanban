@@ -49,6 +49,9 @@ public class Task {
     public LocalDateTime getStartDate() {
         return startDate;
     }
+    public LocalDateTime getEndDate() {
+        return startDate.plusMinutes(duration);
+    }
 
     public void setStartDate(LocalDateTime startDate) {
         this.startDate = startDate;

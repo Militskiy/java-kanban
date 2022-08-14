@@ -10,6 +10,7 @@ import tasks.util.Status;
 
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class InMemoryTaskManager implements TaskManager {
@@ -18,13 +19,19 @@ public class InMemoryTaskManager implements TaskManager {
     protected final LinkedHashMap<String, Task> taskList = new LinkedHashMap<>();
     protected final LinkedHashMap<String, Epic> epicList = new LinkedHashMap<>();
     protected final LinkedHashMap<String, Subtask> subtaskList = new LinkedHashMap<>();
-    protected final TreeSet<Task> dateSortedTaskList = new TreeSet<>(new TaskComparator());
+    protected final TreeSet<Task> dateSortedTaskSet = new TreeSet<>(new TaskComparator());
+    protected boolean isDataLoaded = false;
+
+    @Override
+    public boolean isDataLoaded() {
+        return isDataLoaded;
+    }
 
     // Метод добавления Subtask
     @Override
     public String addSubTask(Subtask subtask) {
         try {
-            if (epicList.get(subtask.getEpic().getId()) == null) {
+            if (epicList.get(subtask.getEpicId()) == null) {
                 throw new NoSuchEpicException("No such epic exists.");
             }
             if (subtask.getStatus() == null) {
@@ -33,9 +40,9 @@ public class InMemoryTaskManager implements TaskManager {
             taskValidator.validateNewTask(subtask, "add");
             subtask.setId(IdGenerator.generateID());
             subtaskList.put(subtask.getId(), subtask);
-            epicList.get(subtask.getEpic().getId()).addSubtask(subtask);
-            updateEpicStatus(subtask);
-            updateEpicDates(subtask);
+            epicList.get(subtask.getEpicId()).addSubtask(subtask.getId());
+            updateEpicStatus(subtask.getEpicId());
+            updateEpicDates(subtask.getEpicId());
             updateSortedByStartDateList(subtask);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
@@ -50,11 +57,10 @@ public class InMemoryTaskManager implements TaskManager {
             LocalDateTime oldStartDate = subtaskList.get(subtask.getId()).getStartDate();
             long oldDuration = subtaskList.get(subtask.getId()).getDuration();
             taskValidator.validateUpdatedTask(subtask, oldStartDate, oldDuration, "update");
-            dateSortedTaskList.remove(subtaskList.get(subtask.getId()));
+            dateSortedTaskSet.remove(subtaskList.get(subtask.getId()));
             subtaskList.put(subtask.getId(), subtask);
-            epicList.get(subtask.getEpic().getId()).updateSubtask(subtask);
-            updateEpicStatus(subtask);
-            updateEpicDates(subtask);
+            updateEpicStatus(subtask.getEpicId());
+            updateEpicDates(subtask.getEpicId());
             updateSortedByStartDateList(subtask);
         } catch (ValidationException e) {
             System.out.println(e.getDetailedMessage());
@@ -66,10 +72,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteSubTask(String subtaskID) {
         if (subtaskList.containsKey(subtaskID)) {
-            epicList.get(subtaskList.get(subtaskID).getEpic().getId()).getSubtaskList().remove(subtaskList.get(subtaskID));
-            updateEpicStatus(subtaskList.get(subtaskID));
-            updateEpicDates(subtaskList.get(subtaskID));
-            dateSortedTaskList.remove(subtaskList.get(subtaskID));
+            epicList.get(subtaskList.get(subtaskID).getEpicId()).getSubtaskIdList().remove(subtaskID);
+            updateEpicStatus(subtaskList.get(subtaskID).getEpicId());
+            updateEpicDates(subtaskList.get(subtaskID).getEpicId());
+            dateSortedTaskSet.remove(subtaskList.get(subtaskID));
             subtaskList.remove(subtaskID);
             historyManager.remove(List.of(subtaskID));
         }
@@ -79,10 +85,13 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllSubTasks() {
         historyManager.remove(new ArrayList<>(subtaskList.keySet()));
-        subtaskList.forEach((id, subtask) -> dateSortedTaskList.remove(subtask));
+        subtaskList.forEach((id, subtask) -> dateSortedTaskSet.remove(subtask));
         subtaskList.clear();
         epicList.forEach((id, epic) -> {
             epic.setStatus(Status.NEW);
+            epic.setStartDate(null);
+            epic.setEndDate(null);
+            epic.setDuration(0);
             epic.clearSubTaskList();
             epicList.put(id, epic);
         });
@@ -91,17 +100,13 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод добавления Task
     @Override
     public String addTask(Task task) {
-        try {
-            if (task.getStatus() == null) {
-                task.setStatus(Status.NEW);
-            }
-            taskValidator.validateNewTask(task, "add");
-            task.setId(IdGenerator.generateID());
-            taskList.put(task.getId(), task);
-            updateSortedByStartDateList(task);
-        } catch (ValidationException e) {
-            System.out.println(e.getDetailedMessage());
+        if (task.getStatus() == null) {
+            task.setStatus(Status.NEW);
         }
+        taskValidator.validateNewTask(task, "add");
+        task.setId(IdGenerator.generateID());
+        taskList.put(task.getId(), task);
+        updateSortedByStartDateList(task);
         return task.getId();
     }
 
@@ -112,7 +117,7 @@ public class InMemoryTaskManager implements TaskManager {
             LocalDateTime oldStartDate = taskList.get(task.getId()).getStartDate();
             long oldDuration = taskList.get(task.getId()).getDuration();
             taskValidator.validateUpdatedTask(task, oldStartDate, oldDuration, "update");
-            dateSortedTaskList.remove(taskList.get(task.getId()));
+            dateSortedTaskSet.remove(taskList.get(task.getId()));
             taskList.put(task.getId(), task);
             updateSortedByStartDateList(task);
         } catch (ValidationException e) {
@@ -125,7 +130,7 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTask(String taskID) {
         if (taskList.containsKey(taskID)) {
             Task task = taskList.get(taskID);
-            dateSortedTaskList.remove(task);
+            dateSortedTaskSet.remove(task);
             taskList.remove(taskID);
             historyManager.remove(List.of(taskID));
             taskValidator.removeTaskFromValidationMap(task);
@@ -135,7 +140,10 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteAllTasks() {
         historyManager.remove(new ArrayList<>(taskList.keySet()));
-        taskList.forEach((id, task) -> dateSortedTaskList.remove(task));
+        taskList.forEach((id, task) -> {
+            dateSortedTaskSet.remove(task);
+            taskValidator.removeTaskFromValidationMap(task);
+        });
         taskList.clear();
     }
 
@@ -160,9 +168,9 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteEpic(String id) {
         if (epicList.containsKey(id)) {
             List<String> ids = new ArrayList<>(List.of(id));
-            epicList.get(id).getSubtaskList().forEach(subtask -> {
-                ids.add(subtask.getId());
-                subtaskList.remove(subtask.getId());
+            epicList.get(id).getSubtaskIdList().forEach(subtaskId -> {
+                ids.add(subtaskId);
+                subtaskList.remove(subtaskId);
             });
             historyManager.remove(ids);
             epicList.remove(id);
@@ -172,7 +180,8 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод удаления всех Epic
     @Override
     public void deleteAllEpics() {
-        epicList.forEach((id, epic) -> epic.getSubtaskList().forEach(dateSortedTaskList::remove));
+        epicList.forEach((id, epic) -> epic.getSubtaskIdList()
+                .forEach(subtaskId -> dateSortedTaskSet.remove(subtaskList.get(id))));
         historyManager.remove(new ArrayList<>(subtaskList.keySet()));
         subtaskList.clear();
         historyManager.remove(new ArrayList<>(epicList.keySet()));
@@ -235,7 +244,7 @@ public class InMemoryTaskManager implements TaskManager {
     public LinkedHashMap<String, Subtask> listEpicSubtasks(String epicID) {
         if (epicList.containsKey(epicID)) {
             LinkedHashMap<String, Subtask> list = new LinkedHashMap<>();
-            epicList.get(epicID).getSubtaskList().forEach(subtask -> list.put(subtask.getId(), subtask));
+            epicList.get(epicID).getSubtaskIdList().forEach(id -> list.put(id, subtaskList.get(id)));
             return list;
         }
         return null;
@@ -252,20 +261,29 @@ public class InMemoryTaskManager implements TaskManager {
 
     @Override
     public TreeSet<Task> listPrioritizedTasks() {
-        return dateSortedTaskList;
+        return dateSortedTaskSet;
     }
 
     @Override
     public <T extends Task> void updateSortedByStartDateList(T task) {
-        dateSortedTaskList.add(task);
+        dateSortedTaskSet.add(task);
+    }
+
+    @Override
+    public List<Task> getHistory() {
+        return historyManager.getHistory();
     }
 
     // Метод расчета статуса Epic в зависимости от статусов его Subtask
-    private void updateEpicStatus(Subtask subtask) {
-        Epic epic = epicList.get(subtask.getEpic().getId());
-        ArrayList<Status> epicStatusList = new ArrayList<>();
-        epic.getSubtaskList().forEach(subtask1 -> epicStatusList.add(subtask1.getStatus()));
-        if (epic.getSubtaskList().isEmpty()) {
+    protected void updateEpicStatus(String epicId) {
+        Epic epic = epicList.get(epicId);
+        List<Status> epicStatusList = subtaskList
+                .values()
+                .stream()
+                .filter(subtask1 -> subtask1.getEpicId().equals(epicId))
+                .map(Task::getStatus)
+                .collect(Collectors.toList());
+        if (epic.getSubtaskIdList().isEmpty()) {
             epic.setStatus(Status.NEW);
         } else {
             if (epicStatusList.stream().allMatch(epicStatusList.get(0)::equals)) {
@@ -277,25 +295,35 @@ public class InMemoryTaskManager implements TaskManager {
     }
 
     // Метод обновления endDate Epic
-    protected void updateEpicDates(Subtask subtask) {
-        Epic epic = epicList.get(subtask.getEpic().getId());
+    protected void updateEpicDates(String epicId) {
+        Epic epic = epicList.get(epicId);
         LocalDateTime minDate = LocalDateTime.of(1900, 1, 1, 0, 0);
         LocalDateTime maxDate = LocalDateTime.of(1900, 1, 1, 0, 0);
         long epicDuration = 0;
-        for (Subtask subtask1 : epic.getSubtaskList()) {
-            if (subtask1.getStartDate() != null) {
-                assert minDate != null;
-                if (minDate.isBefore(subtask1.getStartDate())) {
-                    minDate = subtask1.getStartDate();
+        if (epic.getSubtaskIdList().isEmpty()) {
+            minDate = null;
+            maxDate = null;
+        } else {
+            for (String id : epic.getSubtaskIdList()) {
+                if (subtaskList.get(id).getStartDate() != null) {
+                    assert minDate != null;
+                    if (minDate.isBefore(subtaskList.get(id).getStartDate())) {
+                        minDate = subtaskList.get(id).getStartDate();
+                    }
+                    if (maxDate.isBefore(subtaskList.get(id).getStartDate()
+                            .plusMinutes(subtaskList.get(id).getDuration()))) {
+                        maxDate = subtaskList.get(id).getStartDate().plusMinutes(subtaskList.get(id).getDuration());
+                    }
+                    epicDuration = epicDuration + subtaskList.get(id).getDuration();
+                } else {
+                    assert minDate != null;
+                    if (minDate.equals(LocalDateTime.of(1900, 1, 1, 0, 0))
+                            || maxDate.equals(LocalDateTime.of(1900, 1, 1, 0, 0))){
+                        minDate = null;
+                        maxDate = null;
+                        epicDuration = 0;
+                    }
                 }
-                if (maxDate.isBefore(subtask1.getStartDate().plusMinutes(subtask1.getDuration()))) {
-                    maxDate = subtask1.getStartDate().plusMinutes(subtask1.getDuration());
-                }
-                epicDuration = epicDuration + subtask1.getDuration();
-            } else {
-                minDate = null;
-                maxDate = null;
-                epicDuration = 0;
             }
         }
         epic.setStartDate(minDate);

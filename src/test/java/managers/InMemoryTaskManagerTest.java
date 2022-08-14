@@ -23,12 +23,13 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         taskManager = new InMemoryTaskManager();
         task = new Task(TASK, "Task-1", "New Task-1", NEW, DAY_1, 1440);
         epic = new Epic(EPIC, "Epic-1", "Test Epic");
+        taskManager.addEpic(epic);
         subtask1 = new Subtask(SUBTASK, "Subtask-1", "Test Subtask-1",
-                NEW, DAY_2, 1440, epic);
+                NEW, DAY_2, 1440, epic.getId());
         subtask2 = new Subtask(SUBTASK, "Subtask-2", "Test Subtask-2",
-                DONE, DAY_3, 1440, epic);
+                DONE, DAY_3, 1440, epic.getId());
         subtask3 = new Subtask(SUBTASK, "Subtask-3", "Test Subtask-3",
-                IN_PROGRESS, DAY_4, 1440, epic);
+                IN_PROGRESS, DAY_4, 1440, epic.getId());
     }
 
     @Test
@@ -78,7 +79,6 @@ public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager
         taskManager.addTask(task);
         final Task overLappingTask = new Task(null, TASK,
                 "Overlapping Task", "Will throw exception", NEW, DAY_1, 1440);
-        assertNull(taskManager.addTask(overLappingTask), "ID не должен был назначаться");
         ValidationException ex = assertThrows(ValidationException.class,
                 () -> taskManager.taskValidator.validateNewTask(overLappingTask, "add"));
         assertEquals("Cannot add Task: Task Overlapping Task intersects with another Task",

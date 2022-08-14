@@ -22,6 +22,11 @@ public class InMemoryHistoryManager implements HistoryManager {
         historyList.linkFirst(task);
     }
 
+    @Override
+    public void addLast(Task task) {
+        historyList.linkLast(task);
+    }
+
     // Реализация метода удаления задач из истории (список для ускорения методов удаления всех задач)
     @Override
     public void remove(List<String> idList) {

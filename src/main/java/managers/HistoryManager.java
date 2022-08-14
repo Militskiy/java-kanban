@@ -10,6 +10,7 @@ public interface HistoryManager {
 
     // Метод добавления задачи в историю
     void add(Task task);
+    void addLast(Task task);
 
     // Метод удаления задачи из истории
     void remove(List<String> idList);

@@ -34,4 +34,11 @@ public final class StateSaver {
             throw new ManagerSaveException(path + " (The system cannot find the path specified)");
         }
     }
+    public static void saveEmptyState(String path) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(path, StandardCharsets.UTF_8))) {
+            writer.write("id,type,name,status,description,epic,startDate,duration" + NEXT_LINE + NEXT_LINE);
+        } catch (IOException e) {
+            throw new ManagerSaveException(path + " (The system cannot find the path specified)");
+        }
+    }
 }

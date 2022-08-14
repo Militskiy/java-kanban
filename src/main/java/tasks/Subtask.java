@@ -7,25 +7,25 @@ import java.time.LocalDateTime;
 
 public class Subtask extends Task {
 
-    private final Epic epic;
+    private final String epicId;
 
-    public Epic getEpic() {
-        return epic;
+    public String getEpicId() {
+        return epicId;
     }
 
-    public Subtask(String id, TaskType type, String name, String description, Status status, Epic epic, LocalDateTime startDate, long duration) {
+    public Subtask(String id, TaskType type, String name, String description, Status status, String epicId, LocalDateTime startDate, long duration) {
         super(id, type, name, description, status, startDate, duration);
-        this.epic = epic;
+        this.epicId = epicId;
     }
 
-    public Subtask(TaskType type, String name, String description, Status status, LocalDateTime startDate, long duration, Epic epic) {
+    public Subtask(TaskType type, String name, String description, Status status, LocalDateTime startDate, long duration, String epicId) {
         super(type, name, description, status, startDate, duration);
-        this.epic = epic;
+        this.epicId = epicId;
     }
 
-    public Subtask(TaskType type, String name, String description, Epic epic) {
+    public Subtask(TaskType type, String name, String description, String epicId) {
         super(type, name, description);
-        this.epic = epic;
+        this.epicId = epicId;
     }
 
     @Override
@@ -44,7 +44,7 @@ public class Subtask extends Task {
                 "Name: " + name + " | " +
                 "Status: " + status + " | " +
                 "Description: " + description + " | " +
-                "Epic ID: " + epic.getId() + " | " +
+                "Epic ID: " + epicId + " | " +
                 "Start Date: " + stringStartDate + " | " +
                 "Duration: " + duration + " | " +
                 "End date: " + stringEndDate +"}";

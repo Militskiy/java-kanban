@@ -9,24 +9,17 @@ import java.util.List;
 
 public class Epic extends Task {
 
-    private final List<Subtask> subtaskList = new ArrayList<>();
+    private final List<String> subtaskList = new ArrayList<>();
     private LocalDateTime endDate = null;
 
     public Epic(String id, TaskType type, String name, String description) {
         super(id, type, name, description);
     }
 
-    public void addSubtask(Subtask subtask) {
-        subtaskList.add(subtask);
+    public void addSubtask(String id) {
+        subtaskList.add(id);
     }
 
-    public void updateSubtask(Subtask subtask) {
-        for (int i = 0; i < subtaskList.size(); i++) {
-            if (subtaskList.get(i).getId().equals(subtask.getId())) {
-                subtaskList.set(i, subtask);
-            }
-        }
-    }
 
     public Epic(String id, TaskType type, String name, String description, Status status, LocalDateTime startDate,
                 long duration, LocalDateTime endDate) {
@@ -39,6 +32,7 @@ public class Epic extends Task {
         super(type, name, description);
     }
 
+    @Override
     public LocalDateTime getEndDate() {
         return endDate;
     }
@@ -51,7 +45,7 @@ public class Epic extends Task {
         subtaskList.clear();
     }
 
-    public List<Subtask> getSubtaskList() {
+    public List<String> getSubtaskIdList() {
         return subtaskList;
     }
 
