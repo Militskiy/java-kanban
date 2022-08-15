@@ -17,8 +17,12 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static tasks.util.Status.*;
-import static tasks.util.TaskType.*;
+import static tasks.util.Status.DONE;
+import static tasks.util.Status.IN_PROGRESS;
+import static tasks.util.Status.NEW;
+import static tasks.util.TaskType.EPIC;
+import static tasks.util.TaskType.SUBTASK;
+import static tasks.util.TaskType.TASK;
 
 public class InMemoryTaskManagerTest extends TaskManagerTest<InMemoryTaskManager> {
 

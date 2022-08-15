@@ -2,7 +2,9 @@ package managers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasks.*;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -10,7 +12,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tasks.util.Status.NEW;
-import static tasks.util.TaskType.*;
+import static tasks.util.TaskType.EPIC;
+import static tasks.util.TaskType.SUBTASK;
+import static tasks.util.TaskType.TASK;
 
 
 

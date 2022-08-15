@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.List;
 
-import static managers.util.Constants.*;
+import static managers.util.Constants.NEXT_LINE;
 
 // Утилитарный класс сохранения данных в CSV
 public final class StateSaver {

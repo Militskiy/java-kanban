@@ -9,7 +9,7 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static managers.util.Constants.*;
+import static managers.util.Constants.DELIMITER;
 
 // Утилитарный класс для загрузки данных из CSV
 public final class StateLoader {
