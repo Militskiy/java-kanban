@@ -1,7 +1,11 @@
 package managers.util;
 
 import com.google.common.reflect.TypeToken;
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -37,8 +41,7 @@ public final class Converter {
     }
 
     public static List<Task> convertJsonToTaskList(String json) {
-        return GSON.fromJson(json, new TypeToken<List<Task>>() {
-        }.getType());
+        return GSON.fromJson(json, new TypeToken<List<Task>>() {}.getType());
     }
 
     public static List<Epic> convertJsonToEpicList(String json) {
@@ -81,7 +84,7 @@ public final class Converter {
                     task.getName() + DELIMITER +
                     task.getStatus() + DELIMITER +
                     task.getDescription() + DELIMITER +
-                    "" + DELIMITER +
+                    "null" + DELIMITER +
                     task.getStartDate() + DELIMITER +
                     task.getDuration();
         }
@@ -90,7 +93,7 @@ public final class Converter {
                 task.getName() + DELIMITER +
                 task.getStatus() + DELIMITER +
                 task.getDescription() + DELIMITER +
-                "" + DELIMITER +
+                "null" + DELIMITER +
                 task.getStartDate().toString() + DELIMITER +
                 task.getDuration();
     }

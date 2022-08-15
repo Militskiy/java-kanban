@@ -1,8 +1,14 @@
 package servers;
 
-import com.google.gson.*;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonDeserializer;
+import com.google.gson.JsonPrimitive;
+import com.google.gson.JsonSerializer;
 import managers.InMemoryTaskManager;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
@@ -19,10 +25,9 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static managers.util.Constants.UTF_8;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static tasks.util.Status.*;
 import static tasks.util.TaskType.*;
-import static tasks.util.TaskType.SUBTASK;
 
 class HTTPTaskServerTest {
     InMemoryTaskManager taskManager;

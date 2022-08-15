@@ -1,8 +1,10 @@
 package managers;
 
-import managers.util.StateSaver;
 import managers.util.StateLoader;
-import tasks.*;
+import managers.util.StateSaver;
+import tasks.Epic;
+import tasks.Subtask;
+import tasks.Task;
 import tasks.util.Status;
 import tasks.util.TaskType;
 
@@ -10,7 +12,9 @@ import java.nio.file.Path;
 import java.time.LocalDateTime;
 
 import static managers.util.Constants.DEFAULT_FILE_PATH;
-import static tasks.util.TaskType.*;
+import static tasks.util.TaskType.EPIC;
+import static tasks.util.TaskType.SUBTASK;
+import static tasks.util.TaskType.TASK;
 
 public class FileBackedTasksManager extends InMemoryTaskManager {
 

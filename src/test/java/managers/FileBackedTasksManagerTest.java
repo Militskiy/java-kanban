@@ -11,11 +11,12 @@ import tasks.Task;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static managers.util.Constants.DEFAULT_FILE_PATH;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static tasks.util.Status.*;
 import static tasks.util.TaskType.*;
-import static tasks.util.TaskType.SUBTASK;
 
 class FileBackedTasksManagerTest extends TaskManagerTest<FileBackedTasksManager> {
 
