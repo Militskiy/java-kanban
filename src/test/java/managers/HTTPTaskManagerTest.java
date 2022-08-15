@@ -16,7 +16,6 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static tasks.util.Status.*;
 import static tasks.util.TaskType.*;
-import static tasks.util.TaskType.SUBTASK;
 
 public class HTTPTaskManagerTest extends TaskManagerTest<HTTPTaskManager> {
 

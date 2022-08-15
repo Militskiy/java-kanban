@@ -2,17 +2,16 @@ package managers;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import tasks.Epic;
-import tasks.Subtask;
-import tasks.Task;
+import tasks.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static tasks.util.Status.*;
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static tasks.util.Status.NEW;
 import static tasks.util.TaskType.*;
-import static tasks.util.TaskType.SUBTASK;
+
 
 
 class InMemoryHistoryManagerTest {
