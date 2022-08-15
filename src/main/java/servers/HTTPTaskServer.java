@@ -113,16 +113,16 @@ public class HTTPTaskServer {
                         try {
                             if (task == null) {
                                 System.out.println("Invalid POST/tasks/Task request");
-                                sendErrorMessage(exchange, "Request body is empty, cannot add Task");
+                                sendBadRequestMessage(exchange, "Request body is empty, cannot add Task");
                                 return;
                             } else if (task.getType() == null || task.getName() == null) {
                                 System.out.println("Invalid POST/tasks/Task request");
-                                sendErrorMessage(exchange, "Request body is invalid, cannot add Task");
+                                sendBadRequestMessage(exchange, "Request body is invalid, cannot add Task");
                                 return;
                             } else if (postQuery == null) {
                                 tasksManager.addTask(task);
                                 System.out.println("Added " + task.getType() + " " + task.getName());
-                                exchange.sendResponseHeaders(200, 0);
+                                sendText(exchange, task.getId());
                             } else if (postQuery.split("=")[0].equals("id") &&
                                     task.getId().equals(postQuery.split("=")[1])) {
                                 tasksManager.updateTask(task);
@@ -163,30 +163,25 @@ public class HTTPTaskServer {
                     case "POST":
                         String postQuery = exchange.getRequestURI().getQuery();
                         Epic epic = readEpic(exchange);
-                        try {
-                            if (epic == null) {
-                                System.out.println("Invalid POST/tasks/Task request");
-                                sendErrorMessage(exchange, "Request body is empty, cannot add Task");
-                                return;
-                            } else if (epic.getType() == null || epic.getName() == null) {
-                                System.out.println("Invalid POST/tasks/Task request");
-                                sendErrorMessage(exchange, "Request body is invalid, cannot add Task");
-                                return;
-                            } else if (postQuery == null) {
-                                tasksManager.addEpic(epic);
-                                System.out.println("Added " + epic.getType() + " " + epic.getName());
-                                exchange.sendResponseHeaders(200, 0);
-                            } else if (postQuery.split("=")[0].equals("id") &&
-                                    epic.getId().equals(postQuery.split("=")[1])) {
-                                tasksManager.updateEpic(epic);
-                                System.out.println("Updated " + epic.getType() + " " + epic.getName());
-                                exchange.sendResponseHeaders(200, 0);
-                            } else {
-                                sendErrorMessage(exchange, "<h1>404 Not Found</h1>Wrong query");
-                            }
-                        } catch (ValidationException exception) {
-                            System.out.println("Validation error");
-                            sendValidationError(exchange, exception);
+                        if (epic == null) {
+                            System.out.println("Invalid POST/tasks/Task request");
+                            sendBadRequestMessage(exchange, "Request body is empty, cannot add Epic");
+                            return;
+                        } else if (epic.getType() == null || epic.getName() == null) {
+                            System.out.println("Invalid POST/tasks/Task request");
+                            sendBadRequestMessage(exchange, "Request body is invalid, cannot add Epic");
+                            return;
+                        } else if (postQuery == null) {
+                            tasksManager.addEpic(epic);
+                            System.out.println("Added " + epic.getType() + " " + epic.getName());
+                            sendText(exchange, epic.getId());
+                        } else if (postQuery.split("=")[0].equals("id") &&
+                                epic.getId().equals(postQuery.split("=")[1])) {
+                            tasksManager.updateEpic(epic);
+                            System.out.println("Updated " + epic.getType() + " " + epic.getName());
+                            exchange.sendResponseHeaders(200, 0);
+                        } else {
+                            sendErrorMessage(exchange, "<h1>404 Not Found</h1>Wrong query");
                         }
                         break;
                     case "DELETE":
@@ -220,16 +215,16 @@ public class HTTPTaskServer {
                         try {
                             if (subtask == null) {
                                 System.out.println("Invalid POST/tasks/Task request");
-                                sendErrorMessage(exchange, "Request body is empty, cannot add Task");
+                                sendBadRequestMessage(exchange, "Request body is empty, cannot add Task");
                                 return;
                             } else if (subtask.getType() == null || subtask.getName() == null) {
                                 System.out.println("Invalid POST/tasks/Task request");
-                                sendErrorMessage(exchange, "Request body is invalid, cannot add Task");
+                                sendBadRequestMessage(exchange, "Request body is invalid, cannot add Task");
                                 return;
                             } else if (postQuery == null) {
                                 tasksManager.addSubTask(subtask);
                                 System.out.println("Added " + subtask.getType() + " " + subtask.getName());
-                                exchange.sendResponseHeaders(200, 0);
+                                sendText(exchange, subtask.getId());
                             } else if (postQuery.split("=")[0].equals("id") &&
                                     subtask.getId().equals(postQuery.split("=")[1])) {
                                 tasksManager.updateSubtask(subtask);
@@ -261,6 +256,13 @@ public class HTTPTaskServer {
     private <T extends Task> void sendTasks(HttpExchange exchange, Map<String, T> taskMap) throws IOException {
         byte[] response = GSON.toJson(taskMap).getBytes(DEFAULT_CHARSET);
         exchange.getResponseHeaders().add("Content-Type", "application/json");
+        exchange.sendResponseHeaders(200, 0);
+        exchange.getResponseBody().write(response);
+    }
+
+    private void sendText(HttpExchange exchange, String text) throws IOException {
+        byte[] response = text.getBytes(DEFAULT_CHARSET);
+        exchange.getResponseHeaders().add("Content-Type", "text/plain");
         exchange.sendResponseHeaders(200, 0);
         exchange.getResponseBody().write(response);
     }
@@ -303,6 +305,13 @@ public class HTTPTaskServer {
         byte[] response = message.getBytes(DEFAULT_CHARSET);
         exchange.getResponseHeaders().add("Content-Type", "text/html");
         exchange.sendResponseHeaders(404, 0);
+        exchange.getResponseBody().write(response);
+    }
+
+    private void sendBadRequestMessage(HttpExchange exchange, String message) throws IOException {
+        byte[] response = message.getBytes(DEFAULT_CHARSET);
+        exchange.getResponseHeaders().add("Content-Type", "text/html");
+        exchange.sendResponseHeaders(400, 0);
         exchange.getResponseBody().write(response);
     }
 
@@ -410,5 +419,9 @@ public class HTTPTaskServer {
     public void start() {
         System.out.println("HTTPTaskServer: http://localhost:" + PORT + "/tasks");
         server.start();
+    }
+
+    public void stop() {
+        server.stop(0);
     }
 }

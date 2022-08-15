@@ -5,9 +5,11 @@ import com.google.gson.*;
 import tasks.Epic;
 import tasks.Subtask;
 import tasks.Task;
+import tasks.util.TaskType;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.LinkedHashMap;
 import java.util.List;
 
 import static managers.util.Constants.DELIMITER;
@@ -22,20 +24,34 @@ public final class Converter {
                             .getAsString(), DateTimeFormatter.ISO_DATE_TIME))
             .serializeNulls()
             .create();
+
     private Converter() {
     }
 
     public static <T> String convertListToJson(List<T> list) {
         return GSON.toJson(list);
     }
+
+    public static <K, V> String convertLinkedMapToJson(LinkedHashMap<K, V> map) {
+        return GSON.toJson(map);
+    }
+
     public static List<Task> convertJsonToTaskList(String json) {
-        return GSON.fromJson(json, new TypeToken<List<Task>>(){}.getType());
+        return GSON.fromJson(json, new TypeToken<List<Task>>() {
+        }.getType());
     }
+
     public static List<Epic> convertJsonToEpicList(String json) {
-        return GSON.fromJson(json, new TypeToken<List<Epic>>(){}.getType());
+        return GSON.fromJson(json, new TypeToken<List<Epic>>() {
+        }.getType());
     }
+
     public static List<Subtask> convertJsonToSubtaskList(String json) {
-        return GSON.fromJson(json, new TypeToken<List<Subtask>>(){}.getType());
+        return GSON.fromJson(json, new TypeToken<List<Subtask>>() {}.getType());
+    }
+
+    public static LinkedHashMap<String, TaskType> convertJsonToHistoryMap(String json) {
+        return GSON.fromJson(json, new TypeToken<LinkedHashMap<String, TaskType>>(){}.getType());
     }
 
     public static String convertTaskToCSV(Task task) {

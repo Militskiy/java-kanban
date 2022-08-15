@@ -1,5 +1,6 @@
 package tasks;
 
+import com.google.common.base.Objects;
 import tasks.util.Status;
 import tasks.util.TaskType;
 
@@ -27,6 +28,19 @@ public class Epic extends Task {
         this.endDate = endDate;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Epic epic = (Epic) o;
+        return Objects.equal(subtaskList, epic.subtaskList) && Objects.equal(getEndDate(), epic.getEndDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), subtaskList, getEndDate());
+    }
 
     public Epic(TaskType type, String name, String description) {
         super(type, name, description);

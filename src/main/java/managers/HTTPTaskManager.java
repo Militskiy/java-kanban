@@ -2,8 +2,11 @@ package managers;
 
 import clients.KVTaskClient;
 import managers.util.Converter;
+import tasks.Task;
+import tasks.util.TaskType;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 public class HTTPTaskManager extends FileBackedTasksManager {
@@ -34,7 +37,18 @@ public class HTTPTaskManager extends FileBackedTasksManager {
             taskManager.updateEpicStatus(id);
             taskManager.updateEpicDates(id);
         });
-        Converter.convertJsonToTaskList(historyJson).forEach(taskManager.historyManager::addLast);
+        Converter.convertJsonToHistoryMap(historyJson).forEach((id, type) -> {
+            switch (type) {
+                case TASK:
+                    taskManager.historyManager.addLast(taskManager.taskList.get(id));
+                    break;
+                case EPIC:
+                    taskManager.historyManager.addLast(taskManager.epicList.get(id));
+                    break;
+                case SUBTASK:
+                    taskManager.historyManager.addLast(taskManager.subtaskList.get(id));
+            }
+        });
     }
 
     @Override
@@ -42,6 +56,8 @@ public class HTTPTaskManager extends FileBackedTasksManager {
         client.put("Tasks", Converter.convertListToJson(new ArrayList<>(taskList.values())));
         client.put("Epics", Converter.convertListToJson(new ArrayList<>(epicList.values())));
         client.put("Subtasks", Converter.convertListToJson(new ArrayList<>(subtaskList.values())));
-        client.put("History", Converter.convertListToJson(getHistory()));
+        LinkedHashMap<String, TaskType> history = getHistory().stream()
+                .collect(Collectors.toMap(Task::getId, Task::getType, (e1, e2) -> e1, LinkedHashMap::new));
+        client.put("History", Converter.convertLinkedMapToJson(history));
     }
 }

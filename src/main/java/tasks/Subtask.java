@@ -1,5 +1,6 @@
 package tasks;
 
+import com.google.common.base.Objects;
 import tasks.util.Status;
 import tasks.util.TaskType;
 
@@ -29,6 +30,20 @@ public class Subtask extends Task {
     }
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        Subtask subtask = (Subtask) o;
+        return Objects.equal(getEpicId(), subtask.getEpicId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(super.hashCode(), getEpicId());
+    }
+
+    @Override
     public String toString() {
         String stringStartDate;
         String stringEndDate;
@@ -47,6 +62,6 @@ public class Subtask extends Task {
                 "Epic ID: " + epicId + " | " +
                 "Start Date: " + stringStartDate + " | " +
                 "Duration: " + duration + " | " +
-                "End date: " + stringEndDate +"}";
+                "End date: " + stringEndDate + "}";
     }
 }

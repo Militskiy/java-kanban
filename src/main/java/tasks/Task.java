@@ -1,5 +1,6 @@
 package tasks;
 
+import com.google.common.base.Objects;
 import tasks.util.Status;
 import tasks.util.TaskType;
 
@@ -24,6 +25,7 @@ public class Task {
         this.startDate = startDate;
         this.duration = duration;
     }
+
     public Task(TaskType type, String name, String description, Status status, LocalDateTime startDate, long duration) {
         this.type = type;
         this.name = name;
@@ -49,6 +51,7 @@ public class Task {
     public LocalDateTime getStartDate() {
         return startDate;
     }
+
     public LocalDateTime getEndDate() {
         return startDate.plusMinutes(duration);
     }
@@ -89,6 +92,31 @@ public class Task {
         this.description = description;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Task task = (Task) o;
+        return getDuration() == task.getDuration() &&
+                Objects.equal(getId(), task.getId()) &&
+                getType() == task.getType() &&
+                Objects.equal(getName(), task.getName()) &&
+                Objects.equal(getDescription(), task.getDescription()) &&
+                getStatus() == task.getStatus() &&
+                Objects.equal(getStartDate(), task.getStartDate());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(getId(),
+                getType(),
+                getName(),
+                getDescription(),
+                getStatus(),
+                getStartDate(),
+                getDuration());
+    }
+
     public void setId(String id) {
         this.id = id;
     }
@@ -119,6 +147,6 @@ public class Task {
                 "Description: " + description + " | " +
                 "Start Date: " + stringStartDate + " | " +
                 "Duration: " + duration + " | " +
-                "End date: " + stringEndDate +"}";
+                "End date: " + stringEndDate + "}";
     }
 }

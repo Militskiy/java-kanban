@@ -30,23 +30,19 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод добавления Subtask
     @Override
     public String addSubTask(Subtask subtask) {
-        try {
-            if (epicList.get(subtask.getEpicId()) == null) {
-                throw new NoSuchEpicException("No such epic exists.");
-            }
-            if (subtask.getStatus() == null) {
-                subtask.setStatus(Status.NEW);
-            }
-            taskValidator.validateNewTask(subtask, "add");
-            subtask.setId(IdGenerator.generateID());
-            subtaskList.put(subtask.getId(), subtask);
-            epicList.get(subtask.getEpicId()).addSubtask(subtask.getId());
-            updateEpicStatus(subtask.getEpicId());
-            updateEpicDates(subtask.getEpicId());
-            updateSortedByStartDateList(subtask);
-        } catch (ValidationException e) {
-            System.out.println(e.getDetailedMessage());
+        if (epicList.get(subtask.getEpicId()) == null) {
+            throw new NoSuchEpicException("No such epic exists.");
         }
+        if (subtask.getStatus() == null) {
+            subtask.setStatus(Status.NEW);
+        }
+        taskValidator.validateNewTask(subtask, "add");
+        subtask.setId(IdGenerator.generateID());
+        subtaskList.put(subtask.getId(), subtask);
+        epicList.get(subtask.getEpicId()).addSubtask(subtask.getId());
+        updateEpicStatus(subtask.getEpicId());
+        updateEpicDates(subtask.getEpicId());
+        updateSortedByStartDateList(subtask);
         return subtask.getId();
     }
 
@@ -180,8 +176,13 @@ public class InMemoryTaskManager implements TaskManager {
     // Метод удаления всех Epic
     @Override
     public void deleteAllEpics() {
-        epicList.forEach((id, epic) -> epic.getSubtaskIdList()
-                .forEach(subtaskId -> dateSortedTaskSet.remove(subtaskList.get(id))));
+        for (Epic epic : epicList.values()) {
+            if (!epic.getSubtaskIdList().isEmpty()) {
+                for (String id : epic.getSubtaskIdList()) {
+                    dateSortedTaskSet.remove(subtaskList.get(id));
+                }
+            }
+        }
         historyManager.remove(new ArrayList<>(subtaskList.keySet()));
         subtaskList.clear();
         historyManager.remove(new ArrayList<>(epicList.keySet()));
@@ -318,7 +319,7 @@ public class InMemoryTaskManager implements TaskManager {
                 } else {
                     assert minDate != null;
                     if (minDate.equals(LocalDateTime.of(1900, 1, 1, 0, 0))
-                            || maxDate.equals(LocalDateTime.of(1900, 1, 1, 0, 0))){
+                            || maxDate.equals(LocalDateTime.of(1900, 1, 1, 0, 0))) {
                         minDate = null;
                         maxDate = null;
                         epicDuration = 0;
